@@ -4,7 +4,7 @@ var router = express.Router();
 var internalMonitoringData = require('../models/internal-monitoring-data')
 
 router.get('/', function (req, res, next) {
-	res.json({message: 'Running!'});
+	res.json({message: 'Get is working!'});
 });
 
 // Internal monitoring data
@@ -13,19 +13,34 @@ var imdRoute = router.route('/imd');
 // Create endpoint /imd for POSTS
 imdRoute.post(function (req, res) {
 	var imd = new internalMonitoringData();
+	var time, duration, address, status, error;
 
-	//console.log(req.body.url);
-	//console.log(req.body.status);
-	//console.log(req.body.error);
+    //// текущая дата
+    //var now = new Date().toISOString();
 
-	// текущая дата
-	var now = new Date().toISOString();
-	console.log(now);
+	// Разбор полученных данных.
+	time = req.body.time;
+	duration = req.body.duration;
+	address = req.body.address;
+	status = req.body.status;
+	error = req.body.error;
 
-	var result = imd.add(now, "http://172.16.241.1/SM/ws/RemoteControl", 200, "", function (result) {
-		res.json({message: result});
-	});
+    // Контроль показателей.
+    if (time === null ||duration === null || address === null || status === null) {
+        res.json({message: "Некорректные данные!"});
+        console.log("Некорректные данные!");
+        console.log(req.body);
+    }
+    else if (time === "" || duration === 0) {
+        res.json({message: "Некорректные показатели времени в данных!"});
+        console.log("Некорректные показатели времени в данных!");
+        console.log(req.body);
+    }
+    else {
+        var result = imd.add(time, duration, address, status, error, function (result) {
+            res.json({message: result});
+        });
+    }
 });
-
 
 module.exports = router;

@@ -2,7 +2,7 @@
 
 var sql = require("mssql");
 var dbConfig = {
-	server: "172.16.241.26\\MSSQLSERVER",
+	server: "172.17.244.46\\MSSQLSERVER",
 	database: "RemoteControl_Dis",
 	user: "sa",
 	password: "Qwe`123",
@@ -155,7 +155,7 @@ function getErrorTexts_ID(request, errorText, callback) {
 //----------------------------------------------------------------------------------------------------------------------
 // Экспортируемый метод - добавление данных внутреннего монитринга.
 //----------------------------------------------------------------------------------------------------------------------
-internalMonitoringData.prototype.add = function (measureTime, url, statusCode, errorText, callback) {
+internalMonitoringData.prototype.add = function (checkTime, checkDuration, url, statusCode, errorText, callback) {
 	"use strict";
 
 	// Объекта для обращения к СУБД.
@@ -183,7 +183,7 @@ internalMonitoringData.prototype.add = function (measureTime, url, statusCode, e
 					callback(err);
 				}
 				// Внесение данных в СУБД.
-				request.query("INSERT INTO InternalMonitoringData (MeasureTime, AddressID, StatusID, ErrorID) VALUES ('" + measureTime + "', " + urlID + ", " + statusID + ", " + errorID + ")", function (err, recordset) {
+				request.query("INSERT INTO InternalMonitoringData (CheckTime, CheckDuration, AddressID, StatusID, ErrorID) VALUES ('" + checkTime + "', " + checkDuration + ", " + urlID + ", " + statusID + ", " + errorID + ")", function (err, recordset) {
 					if (err) {
 						console.log(err);
 						callback(err);
