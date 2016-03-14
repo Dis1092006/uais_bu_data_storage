@@ -31,7 +31,7 @@ imdRoute.post(function (req, res) {
         console.log("Некорректные данные!");
         console.log(req.body);
     }
-    else if (time === "" || duration === 0) {
+    else if (time === "") {
         res.json({message: "Некорректные показатели времени в данных!"});
         console.log("Некорректные показатели времени в данных!");
         console.log(req.body);
