@@ -1,7 +1,7 @@
 "use strict";
 var express = require('express');
 var router = express.Router();
-var internalMonitoringData = require('../models/internal-monitoring-data')
+var internalMonitoringData = require('../models/internal-monitoring-data');
 
 router.get('/', function (req, res, next) {
 	res.json({message: 'Get is working!'});
@@ -10,7 +10,7 @@ router.get('/', function (req, res, next) {
 // Internal monitoring data
 var imdRoute = router.route('/imd');
 
-// Create endpoint /imd for POSTS
+// Create endpoint /imd for POST
 imdRoute.post(function (req, res) {
 	var imd = new internalMonitoringData();
 	var time, duration, address, status, error;
@@ -42,5 +42,14 @@ imdRoute.post(function (req, res) {
         });
     }
 });
+
+// Create endpoint /imd for GET
+imdRoute.get(function (req, res) {
+	var imd = new internalMonitoringData();
+	var result = imd.get_current(function (result) {
+		res.json({message: result});
+	});
+});
+
 
 module.exports = router;

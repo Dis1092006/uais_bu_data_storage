@@ -2,7 +2,8 @@
 
 var sql = require("mssql");
 var dbConfig = {
-	server: "172.17.244.46\\MSSQLSERVER",
+	server: "172.16.241.26\\MSSQLSERVER",
+	//server: "172.17.244.46\\MSSQLSERVER",
 	database: "RemoteControl_Dis",
 	user: "sa",
 	password: "Qwe`123",
@@ -153,12 +154,45 @@ function getErrorTexts_ID(request, errorText, callback) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// Экспортируемый метод - добавление данных внутреннего монитринга.
+// Получение текущего среза данных мониторинга.
+//----------------------------------------------------------------------------------------------------------------------
+function getCurrentData(request, callback) {
+	request.query(`
+		DECLARE @StartTime AS DATETIME2 = '2016-03-15T00:00:00';
+		SELECT 
+			A.Name
+			,S.Name AS Status
+			,ErrorID
+			,IMD_1.CheckTime
+			,CAST (IMD_1.CheckDuration AS decimal(15, 0)) / 1000000000 AS CheckDuration
+		FROM InternalMonitoringData AS IMD_1
+		LEFT JOIN Addresses AS A ON IMD_1.AddressID = A.ID
+		LEFT JOIN HTTPStatusCodes AS S ON IMD_1.StatusID = S.ID
+		WHERE
+		IMD_1.CheckTime > @StartTime
+		AND IMD_1.CheckTime =
+			(SELECT MAX(CheckTime) FROM InternalMonitoringData AS IMD_2 WHERE IMD_2.AddressID = IMD_1.AddressID)
+		ORDER BY
+		--A.Name
+		IMD_1.CheckDuration DESC
+		, IMD_1.CheckTime DESC
+		`)
+		.then(function(recordset) {
+			callback(null, recordset);
+		})
+		.catch(function(err) {
+			console.log(err);
+			callback(err);
+		});
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+// Экспортируемый метод - добавление данных внутреннего мониторинга.
 //----------------------------------------------------------------------------------------------------------------------
 internalMonitoringData.prototype.add = function (checkTime, checkDuration, url, statusCode, errorText, callback) {
 	"use strict";
 
-	// Объекта для обращения к СУБД.
+	// Объект для обращения к СУБД.
 	var request = new sql.Request(connection);
 
 	// Ключи.
@@ -187,12 +221,33 @@ internalMonitoringData.prototype.add = function (checkTime, checkDuration, url, 
 					if (err) {
 						console.log(err);
 						callback(err);
+					} else {
+						console.log("OK");
+						callback("OK");
 					}
-					console.log("OK");
-					callback("OK");
 				});
 			});
 		});
+	});
+};
+
+//----------------------------------------------------------------------------------------------------------------------
+// Экспортируемый метод - запрос текущего среза данных внутреннего мониторинга.
+//----------------------------------------------------------------------------------------------------------------------
+internalMonitoringData.prototype.get_current = function (callback) {
+	"use strict";
+
+	// Объект для обращения к СУБД.
+	var request = new sql.Request(connection);
+
+	// Запрос данных.
+	getCurrentData(request, function (err, data) {
+		if (err) {
+			console.log(err);
+			callback(err);
+		} else {
+			callback(data);
+		}
 	});
 };
 
