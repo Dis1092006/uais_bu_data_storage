@@ -1,0 +1,17 @@
+{
+  "development": {
+    "dialect": "mssql",
+    "username": "sa",
+    "password": "Qwe`123",
+    "host": "172.16.241.26",
+    "database": "RemoteControl_Dis"
+  },
+
+  "production": {
+    "dialect": "mssql",
+    "username": "sa",
+    "password": "Qwe`123",
+    "host": "172.17.244.46",
+    "database": "RemoteControl_Dis"
+  }
+}

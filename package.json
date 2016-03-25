@@ -13,6 +13,8 @@
     "jade": "~1.11.0",
     "morgan": "~1.6.1",
     "mssql": "^2.6.2",
-    "serve-favicon": "~2.3.0"
+    "sequelize": "^3.20.0",
+    "serve-favicon": "~2.3.0",
+    "tedious": "^1.13.2"
   }
 }
