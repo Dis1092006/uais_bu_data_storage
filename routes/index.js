@@ -16,8 +16,10 @@ var imdRoute = router.route('/imd');
 var zonesRoute = router.route('/zones');
 var zonesTableRoute = router.route('/zones/table');
 // Ноды
-var nodesRoute = router.route('/zones/:zone_id/nodes');
-var theNodeRoute = router.route('/zones/:zone_id/nodes/:node_id');
+var zonesNodesRoute = router.route('/zones/:zone_id/nodes');
+var theZonesNodeRoute = router.route('/zones/:zone_id/nodes/:node_id');
+var nodesRoute = router.route('/nodes');
+var theNodeRoute = router.route('/nodes/:node_id');
 // Серверы
 var serversRoute = router.route('/servers');
 var theServerRoute = router.route('/servers/:server_id');
@@ -110,10 +112,10 @@ zonesTableRoute.get(function (req, res) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 // GET
-nodesRoute.get(function (req, res) {
+zonesNodesRoute.get(function (req, res) {
 	var node = models.Node.build();
 	
-	node.getAll(
+	node.getAllByZone(
 		req.params.zone_id,
 		function (nodes) {
 			if (nodes) {
@@ -129,7 +131,7 @@ nodesRoute.get(function (req, res) {
 });
 
 // POST
-nodesRoute.post(function (req, res) {
+zonesNodesRoute.post(function (req, res) {
 	var name = req.body.name;
 	var node = models.Node.build({name: name});
 
@@ -149,6 +151,51 @@ nodesRoute.post(function (req, res) {
 
 // ---------------------------------------------------------------------------------------------------------------------
 // /zones/:zone_id/nodes/:node_id
+// ---------------------------------------------------------------------------------------------------------------------
+
+// GET
+theZonesNodeRoute.get(function(req, res) {
+	var node = models.Node.build();
+
+	node.getById(
+		req.params.node_id,
+		function(nodes) {
+			if (nodes) {
+				res.json(nodes);
+			} else {
+				res.send(401, "Node not found");
+			}
+		},
+		function(error) {
+			res.send(500, error);
+		}
+	);
+})
+
+// ---------------------------------------------------------------------------------------------------------------------
+// /nodes
+// ---------------------------------------------------------------------------------------------------------------------
+
+// GET
+nodesRoute.get(function (req, res) {
+	var node = models.Node.build();
+
+	node.getAll(
+		function (nodes) {
+			if (nodes) {
+				res.json(nodes);
+			} else {
+				res.send(401, "Node not found");
+			}
+		},
+		function (error) {
+			res.send(500, error);
+		}
+	);
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+// /nodes/:node_id
 // ---------------------------------------------------------------------------------------------------------------------
 
 // GET

@@ -16,13 +16,18 @@ module.exports = function(sequelize, DataTypes) {
 			}
 		},
 		instanceMethods: {
-			getAll: function(zone_id, onSuccess, onError) {
+			getAll: function(onSuccess, onError) {
+				Node.findAll({raw: true})
+					.then(onSuccess)
+					.error(onError);
+			},
+			getAllByZone: function(zone_id, onSuccess, onError) {
 				var zoneId = zone_id;
 				Node.findAll({raw: true, where: {zoneId: zoneId}})
 					.then(onSuccess)
 					.error(onError);
 			},
-			getById: function(zone_id, node_id, onSuccess, onError) {
+			getById: function(node_id, onSuccess, onError) {
 				Node.find({where: {id: node_id}}, {raw: true})
 					.then(onSuccess)
 					.error(onError);
@@ -30,20 +35,18 @@ module.exports = function(sequelize, DataTypes) {
 			add: function(zone_id, onSuccess, onError) {
 				var name = this.name;
 				var zoneId = zone_id;
-				console.log("zoneId = " + zoneId);
-
 				Node.create({name: name, ZoneId: zoneId})
 					.then(onSuccess)
 					.error(onError);
 			},
-			update: function(zone_id, node_id, onSuccess, onError) {
+			update: function(node_id, onSuccess, onError) {
 				var id = node_id;
 				var name = this.name;
 				Node.update({name: name},{where: {id: id} })
 					.then(onSuccess)
 					.error(onError);
 			},
-			delete: function(zone_id, node_id, onSuccess, onError) {
+			delete: function(node_id, onSuccess, onError) {
 				Node.destroy({where: {id: node_id}})
 					.then(onSuccess)
 					.error(onError);
