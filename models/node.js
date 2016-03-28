@@ -7,12 +7,7 @@ module.exports = function(sequelize, DataTypes) {
 		timestamps: false,
 		classMethods: {
 			associate: function(models) {
-				Node.belongsTo(models.Zone, {
-					onDelete: "CASCADE"//,
-					// foreignKey: {
-					// 	allowNull: false
-					// }
-				});
+				Node.belongsTo(models.Zone);
 			}
 		},
 		instanceMethods: {
@@ -22,32 +17,32 @@ module.exports = function(sequelize, DataTypes) {
 					.error(onError);
 			},
 			getAllByZone: function(zone_id, onSuccess, onError) {
-				var zoneId = zone_id;
-				Node.findAll({raw: true, where: {zoneId: zoneId}})
+				Node.findAll({raw: true, where: {ZoneId: zone_id}})
 					.then(onSuccess)
 					.error(onError);
 			},
 			getById: function(node_id, onSuccess, onError) {
-				Node.find({where: {id: node_id}}, {raw: true})
+				Node.find({where: {ID: node_id}}, {raw: true})
+					.then(onSuccess)
+					.error(onError);
+			},
+			getByName: function(node_name, onSuccess, onError) {
+				Node.findAll({where: {Name: node_name}, raw: true})
 					.then(onSuccess)
 					.error(onError);
 			},
 			add: function(zone_id, onSuccess, onError) {
-				var name = this.name;
-				var zoneId = zone_id;
-				Node.create({name: name, ZoneId: zoneId})
+				Node.create({Name: this.name, ZoneId: zone_id})
 					.then(onSuccess)
 					.error(onError);
 			},
 			update: function(node_id, onSuccess, onError) {
-				var id = node_id;
-				var name = this.name;
-				Node.update({name: name},{where: {id: id} })
+				Node.update({Name: this.name}, {where: {ID: node_id} })
 					.then(onSuccess)
 					.error(onError);
 			},
 			delete: function(node_id, onSuccess, onError) {
-				Node.destroy({where: {id: node_id}})
+				Node.destroy({where: {ID: node_id}})
 					.then(onSuccess)
 					.error(onError);
 			}

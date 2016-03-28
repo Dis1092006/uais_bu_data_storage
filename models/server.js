@@ -13,27 +13,27 @@ module.exports = function(sequelize, DataTypes) {
 					.error(onError);
 			},
 			getById: function(server_id, onSuccess, onError) {
-				Server.find({where: {id: server_id}}, {raw: true})
+				Server.find({where: {ID: server_id}}, {raw: true})
+					.then(onSuccess)
+					.error(onError);
+			},
+			getByName: function(server_name, onSuccess, onError) {
+				Server.findAll({where: {Name: server_name}, raw: true})
 					.then(onSuccess)
 					.error(onError);
 			},
 			add: function(onSuccess, onError) {
-				var name = this.name;
-				var alias = this.alias;
-				Server.create({name: name, alias: alias})
+				Server.create({Name: this.name, Alias: this.alias})
 					.then(onSuccess)
 					.error(onError);
 			},
 			update: function(server_id, onSuccess, onError) {
-				var id = server_id;
-				var name = this.name;
-				var alias = this.alias;
-				Server.update({name: name, alias: alias}, {where: {id: id}})
+				Server.update({Name: this.name, Alias: this.alias}, {where: {ID: server_id}})
 					.then(onSuccess)
 					.error(onError);
 			},
 			delete: function(server_id, onSuccess, onError) {
-				Server.destroy({where: {id: server_id}})
+				Server.destroy({where: {ID: server_id}})
 					.then(onSuccess)
 					.error(onError);
 			}

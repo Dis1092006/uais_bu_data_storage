@@ -15,6 +15,11 @@ module.exports = function(sequelize, DataTypes) {
 				Zone.findAll({raw: true})
 					.then(onSuccess)
 					.error(onError);
+			},
+			getByName: function(zone_name, onSuccess, onError) {
+				Zone.findAll({where: {Name: zone_name}, raw: true})
+					.then(onSuccess)
+					.error(onError);
 			}
 		}
 	});
