@@ -13,14 +13,23 @@
     * _`{"name":"Нода 2"}`_
 * `DELETE /api/v1/nodes/:id` - Удалить ноду по id
 * `GET /api/v1/servers` - Получить список всех серверов
-* `POST /api/v1/servers` - Добавить сервер
-    * _`{"name":"servername","alias":"serveralias"}`_
-* `GET /api/v1/servers/:id` - Получить сервер по id
-* `PUT /api/v1/servers/:id` - Обновить сервер по id
-    * _`{"name":"servername","alias":"serveralias"}`_
-* `DELETE /api/v1/servers/:id` - Удалить сервер по id
+
+
+
+
 
 ### API истории изменений архитектуры
 * `POST /api/v1/history` - Добавить запись в историю
     * _`{"date":"20160328","zone":"Рабочая зона","node":"Нода 1","server":"is19-p-app-09"}`_
 * `GET /api/v1/history/:date` - Получить исторические данные за указанную дату
+
+### API серверов
+
+* `GET /api/v1/servers/:id` - Получить сервер по id
+* `PUT /api/v1/servers/:id` - Обновить сервер по id
+    * _`{"name":"servername","alias":"serveralias"}`_
+* `DELETE /api/v1/servers/:id` - Удалить сервер по id
+* `POST /api/v1/servers/add` - Добавить сервер
+    * _`{"name":"servername","alias":"serveralias","zone":"zonename","node":"nodename"}`_
+* `GET /api/v1/servers/search` - Поиск сервера по параметрам (все параметры опциональные)
+    * _`{"name":"servername","alias":"serveralias"}`_

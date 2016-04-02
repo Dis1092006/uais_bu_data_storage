@@ -286,9 +286,13 @@ serversRoute.get(function (req, res) {
 serversRoute.post(function (req, res) {
 	var name = req.body.name;
 	var alias = req.body.alias;
+	var zone = req.body.zone;
+	var node = req.body.node;
 	var server = models.Server.build({name: name, alias: alias});
 
 	server.add(
+		zone,
+		node,
 		function(servers) {
 			if (servers) {
 				res.json(servers);

@@ -7,7 +7,8 @@ module.exports = function(sequelize, DataTypes) {
 		timestamps: false,
 		classMethods: {
 			associate: function(models) {
-				Zone.hasMany(models.Node)
+				Zone.hasMany(models.Node);
+				Zone.hasMany(models.Server);
 			}
 		},
 		instanceMethods: {
@@ -17,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
 					.error(onError);
 			},
 			getByName: function(zone_name, onSuccess, onError) {
-				Zone.findAll({where: {name: zone_name}, raw: true})
+				Zone.find({where: {name: zone_name}, raw: true})
 					.then(onSuccess)
 					.error(onError);
 			}

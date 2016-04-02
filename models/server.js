@@ -6,6 +6,12 @@ module.exports = function(sequelize, DataTypes) {
 		alias: DataTypes.STRING
 	}, {
 		timestamps: false,
+		classMethods: {
+			associate: function(models) {
+				Server.belongsTo(models.Zone);
+				Server.belongsTo(models.Node);
+			}
+		},
 		instanceMethods: {
 			getAll: function(onSuccess, onError) {
 				Server.findAll({raw: true})
@@ -22,7 +28,13 @@ module.exports = function(sequelize, DataTypes) {
 					.then(onSuccess)
 					.error(onError);
 			},
-			add: function(onSuccess, onError) {
+			add: function(zone, node, onSuccess, onError) {
+				// Обработка переданного значениия зоны.
+				if (zone) {
+					models.Zone.getByName(zone)
+						.then()
+						.error();
+				}
 				Server.create({name: this.name, alias: this.alias})
 					.then(onSuccess)
 					.error(onError);

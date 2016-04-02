@@ -8,6 +8,7 @@ module.exports = function(sequelize, DataTypes) {
 		classMethods: {
 			associate: function(models) {
 				Node.belongsTo(models.Zone);
+				Node.hasMany(models.Server);
 			}
 		},
 		instanceMethods: {
