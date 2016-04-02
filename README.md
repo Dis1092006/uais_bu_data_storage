@@ -19,3 +19,8 @@
 * `PUT /api/v1/servers/:id` - Обновить сервер по id
     * _`{"name":"servername","alias":"serveralias"}`_
 * `DELETE /api/v1/servers/:id` - Удалить сервер по id
+
+### API истории изменений архитектуры
+* `POST /api/v1/history` - Добавить запись в историю
+    * _`{"date":"20160328","zone":"Рабочая зона","node":"Нода 1","server":"is19-p-app-09"}`_
+* `GET /api/v1/history/:date` - Получить исторические данные за указанную дату

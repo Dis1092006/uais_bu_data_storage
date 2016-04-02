@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		instanceMethods: {
 			getAllByDate: function (date, onSuccess, onError) {
-				History.findAll({where: {Date: date}, raw: true})
+				History.findAll({where: {date: date}, raw: true})
 					.then(onSuccess)
 					.error(onError);
 			},

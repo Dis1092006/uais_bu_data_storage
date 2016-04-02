@@ -17,12 +17,12 @@ module.exports = function(sequelize, DataTypes) {
 					.error(onError);
 			},
 			getAllByZone: function(zone_id, onSuccess, onError) {
-				Node.findAll({raw: true, where: {ZoneId: zone_id}})
+				Node.findAll({raw: true, where: {zoneid: zone_id}})
 					.then(onSuccess)
 					.error(onError);
 			},
 			getById: function(node_id, onSuccess, onError) {
-				Node.find({where: {ID: node_id}}, {raw: true})
+				Node.find({where: {id: node_id}}, {raw: true})
 					.then(onSuccess)
 					.error(onError);
 			},

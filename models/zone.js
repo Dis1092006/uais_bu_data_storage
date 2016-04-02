@@ -17,7 +17,7 @@ module.exports = function(sequelize, DataTypes) {
 					.error(onError);
 			},
 			getByName: function(zone_name, onSuccess, onError) {
-				Zone.findAll({where: {Name: zone_name}, raw: true})
+				Zone.findAll({where: {name: zone_name}, raw: true})
 					.then(onSuccess)
 					.error(onError);
 			}

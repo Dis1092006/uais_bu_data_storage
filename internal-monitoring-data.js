@@ -158,13 +158,13 @@ function getErrorTexts_ID(request, errorText, callback) {
 //----------------------------------------------------------------------------------------------------------------------
 function getCurrentData(request, callback) {
 	request.query(`
-		DECLARE @StartTime AS DATETIME2 = '2016-03-15T00:00:00';
+		DECLARE @StartTime AS DATETIME2 = '2016-03-31T08:45:00';
 		SELECT 
 			A.Name
-			,S.Name AS Status
-			,ErrorID
-			,IMD_1.CheckTime
-			,CAST (IMD_1.CheckDuration AS decimal(15, 0)) / 1000000000 AS CheckDuration
+			, S.Name AS Status
+			, ErrorID
+			, IMD_1.CheckTime
+			, CAST (IMD_1.CheckDuration AS decimal(15, 0)) / 1000000000 AS CheckDuration
 		FROM InternalMonitoringData AS IMD_1
 		LEFT JOIN Addresses AS A ON IMD_1.AddressID = A.ID
 		LEFT JOIN HTTPStatusCodes AS S ON IMD_1.StatusID = S.ID
@@ -173,9 +173,9 @@ function getCurrentData(request, callback) {
 		AND IMD_1.CheckTime =
 			(SELECT MAX(CheckTime) FROM InternalMonitoringData AS IMD_2 WHERE IMD_2.AddressID = IMD_1.AddressID)
 		ORDER BY
-		--A.Name
-		IMD_1.CheckDuration DESC
-		, IMD_1.CheckTime DESC
+			IMD_1.StatusID DESC
+			, IMD_1.CheckDuration DESC
+			, IMD_1.CheckTime DESC
 		`)
 		.then(function(recordset) {
 			callback(null, recordset);
