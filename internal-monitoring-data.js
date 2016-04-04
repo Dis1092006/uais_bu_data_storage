@@ -34,122 +34,118 @@ function internalMonitoringData() {
 //----------------------------------------------------------------------------------------------------------------------
 // Получение идентификатора для URL.
 //----------------------------------------------------------------------------------------------------------------------
-function getURL_ID(request, url, callback) {
-	request.query("SELECT ID FROM Addresses WHERE URL = '" + url + "'", function (err, recordset) {
-		if (err) {
-			console.log(err);
-			callback(err);
-		}
-		console.log("В выборке из таблицы Addresses " + recordset.length + " записей");
-		if (recordset.length == 0) {
-			console.log("Добавление новой записи в таблицу Addresses");
-			request.query("INSERT INTO Addresses (URL) VALUES ('" + url + "')", function (err) {
-				if (err) {
-					console.log(err);
-					callback(err);
-				}
-				request.query("SELECT ID FROM Addresses WHERE URL = '" + url + "'", function (err, recordset) {
+function getURL_ID(request, url) {
+	return new Promise(function(resolve, reject) {
+		request.query("SELECT ID FROM Addresses WHERE URL = '" + url + "'", function (err, recordset) {
+			if (err) {
+				reject(Error(err));
+			}
+			console.log("В выборке из таблицы Addresses " + recordset.length + " записей");
+			if (recordset.length == 0) {
+				console.log("Добавление новой записи в таблицу Addresses");
+				request.query("INSERT INTO Addresses (URL) VALUES ('" + url + "')", function (err) {
 					if (err) {
-						console.log(err);
-						callback(err);
+						reject(Error(err));
 					}
-					console.log("В выборке из таблицы Addresses " + recordset.length + " записей");
-					if (recordset.length == 0) {
-						callback("Ошибка добавления URL " + url);
-					}
-					else {
-						callback(null, recordset[0].ID);
-					}
+					request.query("SELECT ID FROM Addresses WHERE URL = '" + url + "'", function (err, recordset) {
+						if (err) {
+							reject(Error(err));
+						}
+						console.log("В выборке из таблицы Addresses " + recordset.length + " записей");
+						if (recordset.length == 0) {
+							reject("Ошибка добавления URL " + url);
+						}
+						else {
+							resolve(recordset[0].ID);
+						}
+					});
 				});
-			});
-		}
-		else {
-			callback(null, recordset[0].ID);
-		}
+			}
+			else {
+				resolve(recordset[0].ID);
+			}
+		});
 	});
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 // Получение идентификатора для кода HTTP-статуса.
 //----------------------------------------------------------------------------------------------------------------------
-function getHTTP_Status_ID(request, statusCode, callback) {
-	request.query("SELECT ID FROM HTTPStatusCodes WHERE Code = '" + statusCode + "'", function (err, recordset) {
-		if (err) {
-			console.log(err);
-			callback(err);
-		}
-		console.log("В выборке из таблицы HTTPStatusCodes " + recordset.length + " записей");
-		if (recordset.length == 0) {
-			console.log("Добавление новой записи в таблицу HTTPStatusCodes");
-			request.query("INSERT INTO HTTPStatusCodes (Code) VALUES ('" + statusCode + "')", function (err) {
-				if (err) {
-					console.log(err);
-					callback(err);
-				}
-				request.query("SELECT ID FROM HTTPStatusCodes WHERE Code = '" + statusCode + "'", function (err, recordset) {
+function getHTTP_Status_ID(request, statusCode) {
+	return new Promise(function(resolve, reject) {
+		request.query("SELECT ID FROM HTTPStatusCodes WHERE Code = '" + statusCode + "'", function (err, recordset) {
+			if (err) {
+				reject(Error(err));
+			}
+			console.log("В выборке из таблицы HTTPStatusCodes " + recordset.length + " записей");
+			if (recordset.length == 0) {
+				console.log("Добавление новой записи в таблицу HTTPStatusCodes");
+				request.query("INSERT INTO HTTPStatusCodes (Code) VALUES ('" + statusCode + "')", function (err) {
 					if (err) {
-						console.log(err);
-						callback(err);
+						reject(Error(err));
 					}
-					console.log("В выборке из таблицы HTTPStatusCodes " + recordset.length + " записей");
-					if (recordset.length == 0) {
-						callback("Ошибка добавления кода HTTP-статуса " + statusCode);
-					}
-					else {
-						callback(null, recordset[0].ID);
-					}
+					request.query("SELECT ID FROM HTTPStatusCodes WHERE Code = '" + statusCode + "'", function (err, recordset) {
+						if (err) {
+							reject(Error(err));
+						}
+						console.log("В выборке из таблицы HTTPStatusCodes " + recordset.length + " записей");
+						if (recordset.length == 0) {
+							reject(Error("Ошибка добавления кода HTTP-статуса " + statusCode));
+						}
+						else {
+							resolve(recordset[0].ID);
+						}
+					});
 				});
-			});
-		}
-		else {
-			callback(null, recordset[0].ID);
-		}
+			}
+			else {
+				resolve(recordset[0].ID);
+			}
+		});
 	});
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 // Получение идентификатора для текста ошибки.
 //----------------------------------------------------------------------------------------------------------------------
-function getErrorTexts_ID(request, errorText, callback) {
-
-	// Если текста ошибки нет, то связь с таблиценй не нужна.
-	if (errorText === "") {
-		callback(null, null);
-		return;
-	}
-
-	// Поиск нужного идентификатора.
-	request.query("SELECT ID FROM ErrorTexts WHERE Error = '" + errorText + "'", function (err, recordset) {
-		if (err) {
-			console.log(err);
-			callback(err);
+function getErrorTexts_ID(request, errorText) {
+	return new Promise(function(resolve, reject) {
+		// Если текста ошибки нет, то связь с таблиценй не нужна.
+		if (errorText === "") {
+			resolve(null);
+			return;
 		}
-		console.log("В выборке из таблицы ErrorTexts " + recordset.length + " записей");
-		if (recordset.length == 0) {
-			console.log("Добавление новой записи в таблицу ErrorTexts");
-			request.query("INSERT INTO ErrorTexts (Error) VALUES ('" + errorText + "')", function (err) {
-				if (err) {
-					console.log(err);
-					callback(err);
-				}
-				request.query("SELECT ID FROM ErrorTexts WHERE Error = '" + errorText + "'", function (err, recordset) {
+
+		// Поиск нужного идентификатора.
+		request.query("SELECT ID FROM ErrorTexts WHERE Error = '" + errorText + "'", function (err, recordset) {
+			if (err) {
+				reject(Error(err));
+			}
+			console.log("В выборке из таблицы ErrorTexts " + recordset.length + " записей");
+			if (recordset.length == 0) {
+				console.log("Добавление новой записи в таблицу ErrorTexts");
+				request.query("INSERT INTO ErrorTexts (Error) VALUES ('" + errorText + "')", function (err) {
 					if (err) {
-						console.log(err);
-						callback(err);
+						reject(Error(err));
 					}
-					console.log("В выборке из таблицы ErrorTexts " + recordset.length + " записей");
-					if (recordset.length == 0) {
-						callback("Ошибка добавления текста ошибки '" + errorText + "'");
-					}
-					else {
-						callback(null, recordset[0].ID);
-					}
+					request.query("SELECT ID FROM ErrorTexts WHERE Error = '" + errorText + "'", function (err, recordset) {
+						if (err) {
+							reject(Error(err));
+						}
+						console.log("В выборке из таблицы ErrorTexts " + recordset.length + " записей");
+						if (recordset.length == 0) {
+							reject(Error("Ошибка добавления текста ошибки '" + errorText + "'"));
+						}
+						else {
+							resolve(recordset[0].ID);
+						}
+					});
 				});
-			});
-		}
-		else {
-			callback(null, recordset[0].ID);
-		}
+			}
+			else {
+				resolve(recordset[0].ID);
+			}
+		});
 	});
 }
 
@@ -201,34 +197,36 @@ internalMonitoringData.prototype.add = function (checkTime, checkDuration, url, 
 	var errorID = 0;
 
 	// Поиск ключей.
-	getURL_ID(request, url, function (err, urlID) {
-		if (err) {
-			console.log(err);
-			callback(err);
-		}
-		getHTTP_Status_ID(request, statusCode, function (err, statusID) {
-			if (err) {
-				console.log(err);
-				callback(err);
-			}
-			getErrorTexts_ID(request, errorText, function (err, errorID) {
+	Promise.all([
+		getURL_ID(request, url),
+		getHTTP_Status_ID(request, statusCode),
+		getErrorTexts_ID(request, errorText)
+		])
+		.then(values => {
+			urlID = values[0];
+			statusID = values[1];
+			errorID = values[2];
+			// Внесение данных в СУБД.
+			request.query("INSERT INTO InternalMonitoringData (CheckTime, CheckDuration, AddressID, StatusID, ErrorID) VALUES ('"
+				+ checkTime + "', "
+				+ checkDuration + ", "
+				+ urlID + ", "
+				+ statusID + ", "
+				+ errorID + ")"
+				, function (err, recordset) {
 				if (err) {
 					console.log(err);
 					callback(err);
+				} else {
+					console.log("OK");
+					callback("OK");
 				}
-				// Внесение данных в СУБД.
-				request.query("INSERT INTO InternalMonitoringData (CheckTime, CheckDuration, AddressID, StatusID, ErrorID) VALUES ('" + checkTime + "', " + checkDuration + ", " + urlID + ", " + statusID + ", " + errorID + ")", function (err, recordset) {
-					if (err) {
-						console.log(err);
-						callback(err);
-					} else {
-						console.log("OK");
-						callback("OK");
-					}
-				});
 			});
+		})
+		.catch(function(error) {
+			console.log(error);
+			callback(error);
 		});
-	});
 };
 
 //----------------------------------------------------------------------------------------------------------------------
