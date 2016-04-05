@@ -85,11 +85,11 @@ zonesRoute.get(function (req, res) {
 			if (zones) {
 				res.json(zones);
 			} else {
-				res.send(401, "Zone not found");
+				res.status(401).send("Zone not found");
 			}
 		},
 		function(error) {
-			res.send(500, error);
+			res.status(500).send(error);
 		}
 	);
 });
@@ -124,11 +124,11 @@ zonesNodesRoute.get(function (req, res) {
 			if (nodes) {
 				res.json(nodes);
 			} else {
-				res.send(401, "Node not found");
+				res.status(401).send("Node not found");
 			}
 		},
 		function (error) {
-			res.send(500, error);
+			res.status(500).send(error);
 		}
 	);
 });
@@ -144,11 +144,11 @@ zonesNodesRoute.post(function (req, res) {
 			if (nodes) {
 				res.json(nodes);
 			} else {
-				res.send(500, "Node add fail");
+				res.status(500).send("Node add fail");
 			}
 		},
 		function(error) {
-			res.send(500, error);
+			res.status(500).send(error);
 		});
 });
 
@@ -166,11 +166,11 @@ theZonesNodeRoute.get(function(req, res) {
 			if (nodes) {
 				res.json(nodes);
 			} else {
-				res.send(401, "Node not found");
+				res.status(401).send("Node not found");
 			}
 		},
 		function(error) {
-			res.send(500, error);
+			res.status(500).send(error);
 		}
 	);
 })
@@ -188,11 +188,11 @@ nodesRoute.get(function (req, res) {
 			if (nodes) {
 				res.json(nodes);
 			} else {
-				res.send(401, "Node not found");
+				res.status(401).send("Node not found");
 			}
 		},
 		function (error) {
-			res.send(500, error);
+			res.status(500).send(error);
 		}
 	);
 });
@@ -205,26 +205,23 @@ nodesRoute.get(function (req, res) {
 theNodeRoute.get(function(req, res) {
 	var node = models.Node.build();
 
-	node.getById(
-		req.params.node_id,
-		function(nodes) {
+	node.getById(req.params.node_id)
+		.then(nodes => {
 			if (nodes) {
 				res.json(nodes);
 			} else {
-				res.send(401, "Node not found");
+				res.status(401).send("Node not found");
 			}
-		},
-		function(error) {
-			res.send(500, error);
-		}
-	);
-})
+		})
+		.catch(error => {
+			res.status(500).send(error);
+		})
+});
 
 // PUT
 theNodeRoute.put(function(req, res) {
 	var name = req.body.name;
-	var alias = req.body.alias;
-	var node = models.Node.build({name: name, alias: alias});
+	var node = models.Node.build({name: name});
 
 	node.update(
 		req.params.node_id,
@@ -232,11 +229,11 @@ theNodeRoute.put(function(req, res) {
 			if (nodes) {
 				res.json(nodes);
 			} else {
-				res.send(500, "Node update fail");
+				res.status(500).send("Node update fail");
 			}
 		},
 		function(error) {
-			res.send(500, error);
+			res.status(500).send(error);
 		}
 	);
 });
@@ -251,11 +248,11 @@ theNodeRoute.delete(function(req, res) {
 			if (nodes) {
 				res.json(nodes);
 			} else {
-				res.send(401, "Node not found");
+				res.status(401).send("Node not found");
 			}
 		},
 		function(error) {
-			res.send(500, error);
+			res.status(500).send(error);
 		}
 	);
 });
@@ -273,11 +270,11 @@ serversRoute.get(function (req, res) {
 			if (servers) {
 				res.json(servers);
 			} else {
-				res.send(401, "Server not found");
+				res.status(401).send("Server not found");
 			}
 		},
 		function(error) {
-			res.send(500, error);
+			res.status(500).send(error);
 		}
 	);
 });
@@ -291,17 +288,18 @@ serversRoute.post(function (req, res) {
 	var server = models.Server.build({name: name, alias: alias});
 
 	server.add(
+		models,
 		zone,
 		node,
 		function(servers) {
 			if (servers) {
 				res.json(servers);
 			} else {
-				res.send(500, "Server add fail");
+				res.status(500).send("Server add fail");
 			}
 		},
 		function(error) {
-			res.send(500, error);
+			res.status(500).send(error.message);
 		}
 	);
 });
@@ -320,11 +318,11 @@ theServerRoute.get(function(req, res) {
 			if (servers) {
 				res.json(servers);
 			} else {
-				res.send(401, "Server not found");
+				res.status(401).send("Server not found");
 			}
 		},
 		function(error) {
-			res.send(500, error);
+			res.status(500).send(error);
 		}
 	);
 })
@@ -341,11 +339,11 @@ theServerRoute.put(function(req, res) {
 			if (servers) {
 				res.json(servers);
 			} else {
-				res.send(500, "Server update fail");
+				res.status(500).send("Server update fail");
 			}
 		},
 		function(error) {
-			res.send(500, error);
+			res.status(500).send(error);
 		}
 	);
 });
@@ -360,11 +358,11 @@ theServerRoute.delete(function(req, res) {
 			if (servers) {
 				res.json(servers);
 			} else {
-				res.send(401, "Server not found");
+				res.status(401).send("Server not found");
 			}
 		},
 		function(error) {
-			res.send(500, error);
+			res.status(500).send(error);
 		}
 	);
 });
@@ -393,63 +391,63 @@ historyRoute.post(function (req, res) {
 	var node = models.Node.build();
 	var server = models.Server.build();
 
-	zone.getByName(
-		zoneName,
-		function(zones) {
-			if ((zones) && (zones.length > 0)) {
-				zoneId = zones[0].id;
-				node.getByName(
-					nodeName,
-					function(nodes) {
-						if ((nodes) && (nodes.length > 0)) {
-							nodeId = nodes[0].id;
-							server.getByName(
-								serverName,
-								function(servers) {
-									if ((servers) && (servers.length > 0)) {
-										serverId = servers[0].id;
-										console.log("zoneId = " + zoneId + ", nodeId = " + nodeId + ", serverId = " + serverId);
-										if ((zoneId !== 0) && (nodeId !== 0) && (serverId !== 0)) {
-											history.add(
-												zoneId,
-												nodeId,
-												serverId,
-												function(history) {
-													if (history) {
-														res.json(history);
-													} else {
-														res.status(500).send("History add fail");
-													}
-												},
-												function(error) {
-													res.status(500).send(error);
-												}
-											);
-										}
-									} else {
-										res.send(401, "Server '" + serverName + "' not found");
-									}
-								},
-								function(error) {
-									res.send(500, error);
-								}
-							);
-						} else {
-							res.send(401, "Node '" + nodeName + "' not found");
-						}
-					},
-					function(error) {
-						res.send(500, error);
-					}
-				);
-			} else {
-				res.send(401, "Zone '" + zoneName + "' not found");
-			}
-		},
-		function(error) {
-			res.send(500, error);
-		}
-	);
+	// zone.getByName(
+	// 	zoneName,
+	// 	function(zones) {
+	// 		if ((zones) && (zones.length > 0)) {
+	// 			zoneId = zones[0].id;
+	// 			node.getByName(
+	// 				nodeName,
+	// 				function(nodes) {
+	// 					if ((nodes) && (nodes.length > 0)) {
+	// 						nodeId = nodes[0].id;
+	// 						server.getByName(
+	// 							serverName,
+	// 							function(servers) {
+	// 								if ((servers) && (servers.length > 0)) {
+	// 									serverId = servers[0].id;
+	// 									console.log("zoneId = " + zoneId + ", nodeId = " + nodeId + ", serverId = " + serverId);
+	// 									if ((zoneId !== 0) && (nodeId !== 0) && (serverId !== 0)) {
+	// 										history.add(
+	// 											zoneId,
+	// 											nodeId,
+	// 											serverId,
+	// 											function(history) {
+	// 												if (history) {
+	// 													res.json(history);
+	// 												} else {
+	// 													res.status(500).send("History add fail");
+	// 												}
+	// 											},
+	// 											function(error) {
+	// 												res.status(500).send(error);
+	// 											}
+	// 										);
+	// 									}
+	// 								} else {
+	// 									res.send(401, "Server '" + serverName + "' not found");
+	// 								}
+	// 							},
+	// 							function(error) {
+	// 								res.send(500, error);
+	// 							}
+	// 						);
+	// 					} else {
+	// 						res.send(401, "Node '" + nodeName + "' not found");
+	// 					}
+	// 				},
+	// 				function(error) {
+	// 					res.send(500, error);
+	// 				}
+	// 			);
+	// 		} else {
+	// 			res.send(401, "Zone '" + zoneName + "' not found");
+	// 		}
+	// 	},
+	// 	function(error) {
+	// 		res.send(500, error);
+	// 	}
+	// );
 });
 
 // ---------------------------------------------------------------------------------------------------------------------

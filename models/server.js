@@ -1,4 +1,5 @@
 "use strict";
+var models = require('../models');
 
 module.exports = function(sequelize, DataTypes) {
 	var Server = sequelize.define("Server", {
@@ -6,6 +7,7 @@ module.exports = function(sequelize, DataTypes) {
 		alias: DataTypes.STRING
 	}, {
 		timestamps: false,
+		underscored: true,
 		classMethods: {
 			associate: function(models) {
 				Server.belongsTo(models.Zone);
@@ -28,16 +30,24 @@ module.exports = function(sequelize, DataTypes) {
 					.then(onSuccess)
 					.error(onError);
 			},
-			add: function(zone, node, onSuccess, onError) {
-				// Обработка переданного значениия зоны.
-				if (zone) {
-					models.Zone.getByName(zone)
-						.then()
-						.error();
-				}
-				Server.create({name: this.name, alias: this.alias})
+			add: function(models, a_zone, a_node, onSuccess, onError) {
+				let zoneModel = models.Zone.build();
+				let nodeModel = models.Node.build();
+				let zone_id = null;
+				let node_id = null;
+				zoneModel.getByNameOrByID(a_zone)
+					.then(the_zone => {
+						if (the_zone)
+							zone_id = the_zone.id;
+						return nodeModel.getByNameOrByID(a_node, zone_id);
+					})
+					.then(the_node => {
+						if (the_node)
+							node_id = the_node.id;
+						return Server.create({name: this.name, alias: this.alias, zone_id: zone_id, node_id: node_id});
+					})
 					.then(onSuccess)
-					.error(onError);
+					.catch(onError);
 			},
 			update: function(server_id, onSuccess, onError) {
 				Server.update({name: this.name, alias: this.alias}, {where: {id: server_id}})

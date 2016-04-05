@@ -12,11 +12,6 @@
 * `PUT /api/v1/nodes/:id` - Обновить ноду по id
     * _`{"name":"Нода 2"}`_
 * `DELETE /api/v1/nodes/:id` - Удалить ноду по id
-* `GET /api/v1/servers` - Получить список всех серверов
-
-
-
-
 
 ### API истории изменений архитектуры
 * `POST /api/v1/history` - Добавить запись в историю
@@ -25,11 +20,19 @@
 
 ### API серверов
 
+* `GET /api/v1/servers` - Получить список всех серверов
 * `GET /api/v1/servers/:id` - Получить сервер по id
 * `PUT /api/v1/servers/:id` - Обновить сервер по id
-    * _`{"name":"servername","alias":"serveralias"}`_
 * `DELETE /api/v1/servers/:id` - Удалить сервер по id
 * `POST /api/v1/servers/add` - Добавить сервер
-    * _`{"name":"servername","alias":"serveralias","zone":"zonename","node":"nodename"}`_
 * `GET /api/v1/servers/search` - Поиск сервера по параметрам (все параметры опциональные)
-    * _`{"name":"servername","alias":"serveralias"}`_
+
+## _данные сервера_
+```
+    {
+        "name": "server__name",
+        "alias": "server__alias",
+        "zone": "zone_id" | "zone_name, [необязательный, ищется зона сначала по идентификатору, потом по имени, если не найдена, то создаётся]
+        "node": "node_id" | "node_name" [необязательный, ищется нода сначала по идентификатору, потом по имени (с привязкой к зоне), если не найдена, то создаётся]
+    }
+```  
