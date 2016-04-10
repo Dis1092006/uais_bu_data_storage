@@ -117,7 +117,7 @@ zonesTableRoute.get(function (req, res) {
 // GET
 zonesNodesRoute.get(function (req, res) {
 	var node = models.Node.build();
-	
+
 	node.getAllByZone(
 		req.params.zone_id,
 		function (nodes) {
@@ -173,7 +173,7 @@ theZonesNodeRoute.get(function(req, res) {
 			res.status(500).send(error);
 		}
 	);
-})
+});
 
 // ---------------------------------------------------------------------------------------------------------------------
 // /nodes
@@ -263,20 +263,110 @@ theNodeRoute.delete(function(req, res) {
 
 // GET
 serversRoute.get(function (req, res) {
-	var server = models.Server.build();
+	let serverModel = models.Server.build();
+	let zoneModel = models.Zone.build();
+	let nodeModel = models.Node.build();
 
-	server.getAll(
-		function(servers) {
-			if (servers) {
-				res.json(servers);
-			} else {
-				res.status(401).send("Server not found");
-			}
-		},
-		function(error) {
-			res.status(500).send(error);
+	// Анализ параметров.
+	let server_name = req.query.name;
+	let server_alias = req.query.alias;
+	let zone_id = 0;
+	let node_id = 0;
+
+	// Асинхронное получение zone_id.
+	let promiseZoneId = new Promise((resolve, reject) => {
+		if (req.query.zone) {
+			zoneModel.getByNameOrByID(req.query.zone, false)
+				.then(zone => {
+					zone_id = zone.id;
+					resolve(zone_id);
+				})
+				.catch(error => reject(error))
 		}
-	);
+		else {
+			resolve(0);
+		}
+	});
+	promiseZoneId
+		.then(zone_id => {
+			// Асинхронное получение nodeId.
+			return new Promise((resolve, reject) => {
+				if (req.query.node) {
+					nodeModel.getByNameOrByID(req.query.node, zone_id, false)
+						.then(node => {
+							node_id = node.id;
+							resolve(node_id);
+						})
+						.catch(error => reject(error))
+				}
+				else {
+					resolve(0);
+				}
+			})
+		})
+		.then(node_id => {
+
+			console.log("name = " + server_name);
+			console.log("alias = " + server_alias);
+			console.log("zone_id = " + zone_id);
+			console.log("node_id = " + node_id);
+
+			// Подготовка фильтра.
+			let filter = "";
+			if (server_name) {
+				if (filter !== "") {
+					filter += " AND ";
+				}
+				filter += "name like N'%" + server_name + "%'";
+			}
+			if (server_alias) {
+				if (filter !== "") {
+					filter += " AND ";
+				}
+				filter += "alias like N'%" + server_alias + "%'";
+			}
+			if (zone_id) {
+				if (filter !== "") {
+					filter += " AND ";
+				}
+				filter += "zone_id = " + zone_id;
+			}
+			if (node_id) {
+				if (filter !== "") {
+					filter += " AND ";
+				}
+				filter += "node_id = " + node_id;
+			}
+
+			// Если задан хотя бы один параметр, то будет поиск с условием.
+			if (filter !== "") {
+				serverModel.getByFilter(
+					filter,
+					servers => {
+						if (servers) {
+							res.json(servers);
+						} else {
+							res.status(401).send("Servers not found");
+						}
+					},
+					error => res.status(500).send(error)
+				);
+			}
+			// Иначе - простая выборка всех серверов.
+			else {
+				serverModel.getAll(
+					servers => {
+						if (servers) {
+							res.json(servers);
+						} else {
+							res.status(401).send("Servers not found");
+						}
+					},
+					error => res.status(500).send(error)
+				);
+			}
+		})
+	.catch(error => res.status(500).send(error.message));
 });
 
 // POST

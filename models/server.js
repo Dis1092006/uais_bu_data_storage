@@ -1,5 +1,4 @@
 "use strict";
-var models = require('../models');
 
 module.exports = function(sequelize, DataTypes) {
 	var Server = sequelize.define("Server", {
@@ -30,16 +29,24 @@ module.exports = function(sequelize, DataTypes) {
 					.then(onSuccess)
 					.error(onError);
 			},
+			getByFilter: function(filter, onSuccess, onError) {
+				sequelize.query(
+					"SELECT * FROM Servers WHERE " + filter,
+					{type: sequelize.QueryTypes.SELECT}
+				)
+					.then(onSuccess)
+					.catch(onError);
+			},
 			add: function(models, a_zone, a_node, onSuccess, onError) {
 				let zoneModel = models.Zone.build();
 				let nodeModel = models.Node.build();
 				let zone_id = null;
 				let node_id = null;
-				zoneModel.getByNameOrByID(a_zone)
+				zoneModel.getByNameOrByID(a_zone, true)
 					.then(the_zone => {
 						if (the_zone)
 							zone_id = the_zone.id;
-						return nodeModel.getByNameOrByID(a_node, zone_id);
+						return nodeModel.getByNameOrByID(a_node, zone_id, true);
 					})
 					.then(the_node => {
 						if (the_node)

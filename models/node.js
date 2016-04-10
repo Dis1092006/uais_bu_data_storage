@@ -73,7 +73,7 @@ module.exports = function(sequelize, DataTypes) {
 					.then(onSuccess)
 					.error(onError);
 			},
-			getByNameOrByID: function(node_something, zone_id) {
+			getByNameOrByID: function(node_something, zone_id, needCreate) {
 				return new Promise(function(resolve, reject) {
 					let nodeModel = Node.build();
 					if (node_something) {
@@ -87,11 +87,13 @@ module.exports = function(sequelize, DataTypes) {
 									.then(node => resolve(node))
 									.catch(() => {
 										if (zone_id) {
-											console.log("Создание ноды, если не найдена");
-											// Создание зоны, если не найдена.
-											Node.create({name: node_something, zone_id: zone_id})
-												.then(node => resolve(node))
-												.catch(error => reject(error))
+											if (needCreate) {
+												console.log("Создание ноды, если не найдена");
+												// Создание зоны, если не найдена.
+												Node.create({name: node_something, zone_id: zone_id})
+													.then(node => resolve(node))
+													.catch(error => reject(error))
+											}
 										} else {
 											console.log("Зона не задана, ноду создать невозможно!");
 											resolve(null);

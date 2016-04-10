@@ -1,9 +1,8 @@
 "use strict";
-var Promise = require('bluebird');
 
 module.exports = function(sequelize, DataTypes) {
 	var Zone = sequelize.define("Zone", {
-		name: DataTypes.STRING,
+		name: DataTypes.STRING
 	}, {
 		timestamps: false,
 		underscored: true,
@@ -50,7 +49,7 @@ module.exports = function(sequelize, DataTypes) {
 						.catch(error => reject(error));
 				});
 			},
-			getByNameOrByID: function(zone_something) {
+			getByNameOrByID: function(zone_something, needCreate) {
 				return new Promise(function(resolve, reject) {
 					let zoneModel = Zone.build();
 					if (zone_something) {
@@ -63,11 +62,13 @@ module.exports = function(sequelize, DataTypes) {
 								zoneModel.getByName(zone_something)
 									.then(zone => resolve(zone))
 									.catch(() => {
-										console.log("Создание зоны, если не найдена");
-										// Создание зоны, если не найдена.
-										Zone.create({name: zone_something})
-											.then(zone => resolve(zone))
-											.catch(error => reject(error))
+										if (needCreate) {
+											console.log("Создание зоны, если не найдена");
+											// Создание зоны, если не найдена.
+											Zone.create({name: zone_something})
+												.then(zone => resolve(zone))
+												.catch(error => reject(error))
+										}
 									})
 							})
 					}
