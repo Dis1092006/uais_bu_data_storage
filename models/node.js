@@ -36,16 +36,15 @@ module.exports = function(sequelize, DataTypes) {
 					}
 				});
 			},
-			getByName: function(node_name, zone_id) {
+			getByName: function(node_name, zone_id, strictSearch) {
 				return new Promise(function(resolve, reject) {
-					sequelize.query(
-							"SELECT TOP 1 [id], [name], [zone_id] FROM [Nodes] AS [Node] WHERE [Node].[name] = N'"
-							+ node_name
-							+ "' AND [Node].[zone_id] = "
-							+ zone_id
-							+ " ORDER BY [id]",
-						{type: sequelize.QueryTypes.SELECT}
-						)
+					let _query = "";
+					if (strictSearch) {
+						_query = "SELECT TOP 1 [id], [name], [zone_id] FROM [Nodes] AS [Node] WHERE [Node].[name] = N'" + node_name + "' AND [Node].[zone_id] = " + zone_id + " ORDER BY [id]";
+					} else {
+						_query = "SELECT TOP 1 [id], [name], [zone_id] FROM [Nodes] AS [Node] WHERE [Node].[name] LIKE N'%" + node_name + "%' AND [Node].[zone_id] = " + zone_id + " ORDER BY [id]";
+					}
+					sequelize.query(_query, {type: sequelize.QueryTypes.SELECT})
 						.then(
 							nodes => {
 								if (nodes.length > 0) {
@@ -73,7 +72,7 @@ module.exports = function(sequelize, DataTypes) {
 					.then(onSuccess)
 					.error(onError);
 			},
-			getByNameOrByID: function(node_something, zone_id, needCreate) {
+			getByNameOrByID: function(node_something, zone_id, strictSearch, needCreate) {
 				return new Promise(function(resolve, reject) {
 					let nodeModel = Node.build();
 					if (node_something) {

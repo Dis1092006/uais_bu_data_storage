@@ -15,6 +15,7 @@ var imdRoute = router.route('/imd');
 // Зоны
 var zonesRoute = router.route('/zones');
 var zonesTableRoute = router.route('/zones/table');
+var theZoneRoute = router.route('/zones/:zone_id');
 // Ноды
 var zonesNodesRoute = router.route('/zones/:zone_id/nodes');
 var theZonesNodeRoute = router.route('/zones/:zone_id/nodes/:node_id');
@@ -108,6 +109,25 @@ zonesTableRoute.get(function (req, res) {
 			zones: zones
 		});
 	});
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+// /zones/:zone_id
+// ---------------------------------------------------------------------------------------------------------------------
+
+// GET
+theZoneRoute.get(function (req, res) {
+	var zone = models.Zone.build();
+
+	zone.getById(req.params.zone_id)
+		.then(zone => {
+			if (zone) {
+				res.json(zone);
+			} else {
+				res.status(401).send("Zone not found");
+			}
+		})
+		.catch(error => res.status(500).send(error));
 });
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -276,7 +296,7 @@ serversRoute.get(function (req, res) {
 	// Асинхронное получение zone_id.
 	let promiseZoneId = new Promise((resolve, reject) => {
 		if (req.query.zone) {
-			zoneModel.getByNameOrByID(req.query.zone, false)
+			zoneModel.getByNameOrByID(req.query.zone, false, false)
 				.then(zone => {
 					zone_id = zone.id;
 					resolve(zone_id);
@@ -292,7 +312,7 @@ serversRoute.get(function (req, res) {
 			// Асинхронное получение nodeId.
 			return new Promise((resolve, reject) => {
 				if (req.query.node) {
-					nodeModel.getByNameOrByID(req.query.node, zone_id, false)
+					nodeModel.getByNameOrByID(req.query.node, zone_id, false, false)
 						.then(node => {
 							node_id = node.id;
 							resolve(node_id);

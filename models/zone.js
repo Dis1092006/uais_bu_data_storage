@@ -31,12 +31,15 @@ module.exports = function(sequelize, DataTypes) {
 					}
 				});
 			},
-			getByName: function(zone_name) {
+			getByName: function(zone_name, strictSearch) {
 				return new Promise(function(resolve, reject) {
-					sequelize.query(
-						"SELECT TOP 1 [id], [name] FROM [Zones] AS [Zone] WHERE [Zone].[name] = N'" + zone_name + "' ORDER BY [id]",
-						{type: sequelize.QueryTypes.SELECT}
-					)
+					let _query = "";
+					if (strictSearch) {
+						_query = "SELECT TOP 1 [id], [name] FROM [Zones] AS [Zone] WHERE [Zone].[name] = N'" + zone_name + "' ORDER BY [id]";
+					} else {
+						_query = "SELECT TOP 1 [id], [name] FROM [Zones] AS [Zone] WHERE [Zone].[name] LIKE N'%" + zone_name + "%' ORDER BY [id]";
+					}
+					sequelize.query(_query, {type: sequelize.QueryTypes.SELECT})
 						.then(
 							zones => {
 								if (zones.length > 0) {
@@ -49,7 +52,7 @@ module.exports = function(sequelize, DataTypes) {
 						.catch(error => reject(error));
 				});
 			},
-			getByNameOrByID: function(zone_something, needCreate) {
+			getByNameOrByID: function(zone_something, strictSearch, needCreate) {
 				return new Promise(function(resolve, reject) {
 					let zoneModel = Zone.build();
 					if (zone_something) {
@@ -59,7 +62,7 @@ module.exports = function(sequelize, DataTypes) {
 							.catch(() => {
 								console.log("Поиск зоны по имени");
 								// Поиск по имени.
-								zoneModel.getByName(zone_something)
+								zoneModel.getByName(zone_something, strictSearch)
 									.then(zone => resolve(zone))
 									.catch(() => {
 										if (needCreate) {

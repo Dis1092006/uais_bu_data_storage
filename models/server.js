@@ -42,11 +42,11 @@ module.exports = function(sequelize, DataTypes) {
 				let nodeModel = models.Node.build();
 				let zone_id = null;
 				let node_id = null;
-				zoneModel.getByNameOrByID(a_zone, true)
+				zoneModel.getByNameOrByID(a_zone, true, true)
 					.then(the_zone => {
 						if (the_zone)
 							zone_id = the_zone.id;
-						return nodeModel.getByNameOrByID(a_node, zone_id, true);
+						return nodeModel.getByNameOrByID(a_node, zone_id, true, true);
 					})
 					.then(the_node => {
 						if (the_node)

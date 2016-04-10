@@ -15,8 +15,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -27,8 +32,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -39,8 +49,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -51,8 +66,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -63,8 +83,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -92,8 +117,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.put("/api/v1/nodes/" + addedNodeId)
 			.send({"name":"Тест! Удалить!"})
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -104,8 +134,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -117,12 +152,14 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
 				if (err) {
+					console.log(err);
 					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+					res.body.should.have.property('id');
 				}
-				res.status.should.equal(200);
-				res.body.should.have.property('id');
 				addedServerId = res.body.id;
 				done();
 			});
@@ -134,8 +171,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -146,8 +188,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -158,8 +205,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -170,20 +222,31 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
 
+/*
 	it("GET /api/v1/servers?zone=Рабочая", function(done){
 		server
 			.get("/api/v1/servers?zone=Рабочая")
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+ throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -194,8 +257,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -206,8 +274,30 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
+				done();
+			});
+	});
+ */
+	it("GET /api/v1/servers?zone=1&node=", function(done){
+		server
+			.get("/api/v1/servers?zone=1&node=" + addedNodeId)
+			.expect("Content-type", /json/)
+			.expect(200)
+			.end(function(err, res){
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -217,8 +307,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.put("/api/v1/servers/" + addedServerId)
 			.send({"name":"Тест! Удалить!","alias":"Тест!"})
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -228,8 +323,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.delete("/api/v1/servers/" + addedServerId)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -239,8 +339,13 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			.delete("/api/v1/nodes/" + addedNodeId)
 			.expect(200)
 			.end(function(err, res){
-				console.log(res.text);
-				res.status.should.equal(200);
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
