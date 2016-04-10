@@ -16,5 +16,10 @@
     "sequelize": "^3.20.0",
     "serve-favicon": "~2.3.0",
     "tedious": "^1.13.2"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "should": "^8.3.0",
+    "supertest": "^1.2.0"
   }
 }
