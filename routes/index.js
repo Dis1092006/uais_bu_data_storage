@@ -27,6 +27,12 @@ var theServerRoute = router.route('/servers/:server_id');
 // История изменений архитектуры
 var historyRoute = router.route('/history');
 var historyByDateRoute = router.route('/history/:date');
+// Базы данных
+var databasesRoute = router.route('/databases');
+var theDatabaseRoute = router.route('/databases/:db_id');
+// Архивы баз данных
+var todayBackupsRoute = router.route('/backups/today');
+var allBackupsRoute = router.route('/backups/all');
 
 // ---------------------------------------------------------------------------------------------------------------------
 // /imd
@@ -588,6 +594,136 @@ historyByDateRoute.get(function (req, res) {
 			}
 		);
 	}
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+// /databases
+// ---------------------------------------------------------------------------------------------------------------------
+
+// GET
+databasesRoute.get(function (req, res) {
+	var database = models.Database.build();
+
+	database.getAll(
+		(result) => {
+			if (result) {
+				res.json(result);
+			} else {
+				res.status(401).send("Databases not found");
+			}
+		},
+		(error) => res.status(500).send(error)
+	);
+});
+
+// POST
+databasesRoute.post(function (req, res) {
+	var name = req.body.name;
+	var server_id = req.body.server_id;
+	var database = models.Database.build({name: name});
+
+	database.add(
+		server_id,
+		(result) => {
+			if (result) {
+				res.json(result);
+			} else {
+				res.status(401).send("Database add fail");
+			}
+		},
+		(error) => res.status(500).send(error)
+	);
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+// /databases/:db_id
+// ---------------------------------------------------------------------------------------------------------------------
+
+// GET
+theDatabaseRoute.get(function(req, res) {
+	var database = models.Database.build();
+
+	database.getById(
+		req.params.db_id,
+		(result) => {
+			if (result) {
+				res.json(result);
+			} else {
+				res.status(401).send("Database not found");
+			}
+		},
+		(error) => res.status(500).send(error)
+	);
+});
+
+// PUT
+theDatabaseRoute.put(function(req, res) {
+	var name = req.body.name;
+	var server_id = req.body.server_id;
+	var database = models.Database.build({name: name});
+
+	database.update(
+		req.params.db_id,
+		server_id,
+		(result) => {
+			if (result) {
+				res.json(result);
+			} else {
+				res.status(401).send("Database update fail");
+			}
+		},
+		(error) => res.status(500).send(error)
+	);
+});
+
+// DELETE
+theDatabaseRoute.delete(function(req, res) {
+	var database = models.Database.build();
+
+	database.delete(
+		req.params.db_id,
+		(result) => {
+			if (result) {
+				res.json(result);
+			} else {
+				res.status(401).send("Database not found");
+			}
+		},
+		(error) => res.status(500).send(error)
+	);
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+// /backups/today
+// ---------------------------------------------------------------------------------------------------------------------
+
+// GET
+todayBackupsRoute.get(function (req, res) {
+	var database = models.Database.build({date: date});
+
+	database.getLastBackups(
+		function(backups) {
+			if (backups) {
+				res.json(backups);
+			} else {
+				res.status(401).send("Backups not found");
+			}
+		},
+		function(error) {
+			res.status(500).send(error);
+		}
+	);
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+// /backups/all
+// ---------------------------------------------------------------------------------------------------------------------
+
+// GET
+allBackupsRoute.get(function (req, res) {
+//	var database = models.Database.build({date: date});
+
+	res.send("Under construction"); // ToDo /backups/all
 });
 
 module.exports = router;

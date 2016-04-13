@@ -8,6 +8,7 @@ var server = supertest.agent("http://localhost:9000");
 describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 	let addedNodeId = 0;
 	let addedServerId = 0;
+	let addedDatabaseId = 0;
 
 	it("GET /api/v1/zones", function(done){
 		server
@@ -306,6 +307,108 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 		server
 			.put("/api/v1/servers/" + addedServerId)
 			.send({"name":"Тест! Удалить!","alias":"Тест!"})
+			.end(function(err, res){
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
+				done();
+			});
+	});
+
+	it("GET /api/v1/databases", function(done){
+		server
+			.get("/api/v1/databases")
+			.expect("Content-type", /json/)
+			.expect(200)
+			.end(function(err, res){
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
+				done();
+			});
+	});
+
+	it("POST /api/v1/databases", function(done){
+		server
+			.post("/api/v1/databases")
+			.send({"name":"Тест!","server_id":"1"})
+			.expect("Content-type", /json/)
+			.expect(200)
+			.end(function(err, res){
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+					res.body.should.have.property('id');
+				}
+				addedDatabaseId = res.body.id;
+				done();
+			});
+	});
+
+	it("GET /api/v1/databases/:id", function(done){
+		server
+			.get("/api/v1/databases/" + addedDatabaseId)
+			.expect("Content-type", /json/)
+			.expect(200)
+			.end(function(err, res){
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
+				done();
+			});
+	});
+
+	it("PUT /api/v1/databases/:id", function(done){
+		server
+			.put("/api/v1/databases/" + addedDatabaseId)
+			.send({"name":"Тест! Удалить!"})
+			.end(function(err, res){
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
+				done();
+			});
+	});
+
+	it("PUT /api/v1/databases/:id", function(done){
+		server
+			.put("/api/v1/databases/" + addedDatabaseId)
+			.send({"server_id":"2"})
+			.end(function(err, res){
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
+				done();
+			});
+	});
+
+	it("DELETE /api/v1/databases/:id", function(done){
+		server
+			.delete("/api/v1/databases/" + addedDatabaseId)
+			.expect(200)
 			.end(function(err, res){
 				if (err) {
 					console.log(err);
