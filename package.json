@@ -1,6 +1,6 @@
 {
-  "name": "data-collector",
-  "version": "1.0.0",
+  "name": "uais_bu_data_storage",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
