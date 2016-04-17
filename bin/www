@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-var debug = require('debug')('data-collector:server');
+var debug = require('debug')('uais_bu_data_storage:server');
 var app = require('../app');
 var models = require("../models");
 var http = require('http');

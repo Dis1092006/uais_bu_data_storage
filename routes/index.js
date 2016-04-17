@@ -31,6 +31,7 @@ var historyByDateRoute = router.route('/history/:date');
 var databasesRoute = router.route('/databases');
 var theDatabaseRoute = router.route('/databases/:db_id');
 // Архивы баз данных
+var lastBackupsRoute = router.route('/backups/last');
 var todayBackupsRoute = router.route('/backups/today');
 var allBackupsRoute = router.route('/backups/all');
 
@@ -687,6 +688,49 @@ theDatabaseRoute.delete(function(req, res) {
 				res.json(result);
 			} else {
 				res.status(401).send("Database not found");
+			}
+		},
+		(error) => res.status(500).send(error)
+	);
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+// /backups/last
+// ---------------------------------------------------------------------------------------------------------------------
+
+// PUT
+lastBackupsRoute.put(function (req, res) {
+	var file_name = req.body.file_name;
+	var database_id = req.body.database_id;
+	var lastBackup = models.LastBackup.build({file_name: file_name});
+
+	lastBackup.getByDatabaseId(
+		database_id,
+		(backups) => {
+			if ((backups) && (backups.length > 0)) {
+				lastBackup.update(
+					database_id,
+					(result) => {
+						if (result) {
+							res.json(result);
+						} else {
+							res.status(401).send("Last backup update fail");
+						}
+					},
+					(error) => res.status(500).send(error)
+				);
+			} else {
+				lastBackup.add(
+					database_id,
+					(result) => {
+						if (result) {
+							res.json(result);
+						} else {
+							res.status(401).send("Last backup add fail");
+						}
+					},
+					(error) => res.status(500).send(error)
+				);
 			}
 		},
 		(error) => res.status(500).send(error)
