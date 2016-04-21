@@ -26,7 +26,12 @@ module.exports = function(sequelize, DataTypes) {
 					}
 					else {
 						Zone.find({where: {id: _id}}, {raw: true})
-							.then(zone => resolve(zone))
+							.then(zone => {
+								if (zone)
+									resolve(zone);
+								else
+									reject("Zone by Id not found");
+							})
 							.catch(error => reject(error));
 					}
 				});
@@ -77,6 +82,26 @@ module.exports = function(sequelize, DataTypes) {
 					}
 					else
 						resolve(null);
+				});
+			},
+			getScheme: function() {
+				return new Promise(function(resolve, reject) {
+					let _query = `
+						SELECT 
+							[Zones].[name] AS zone, 
+							[Nodes].[name] AS node, 
+							[Servers].[name] AS server_name, 
+							[Servers].[alias] AS server_alias
+						FROM [Zones] 
+							LEFT OUTER JOIN [Nodes] 
+								ON [Zones].[id] = [Nodes].[zone_id]
+							LEFT OUTER JOIN [Servers] 
+								ON [Zones].[id] = [Servers].[zone_id] 
+								AND [Nodes].[id] = [Servers].[node_id];
+						`;
+					sequelize.query(_query, {type: sequelize.QueryTypes.SELECT})
+						.then(result => resolve(result))
+						.catch(error => reject(error));
 				});
 			}
 		}

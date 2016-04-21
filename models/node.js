@@ -2,7 +2,7 @@
 
 module.exports = function(sequelize, DataTypes) {
 	var Node = sequelize.define('Node', {
-		name: DataTypes.STRING,
+		name: DataTypes.STRING
 	}, {
 		timestamps: false,
 		underscored: true,
@@ -31,7 +31,12 @@ module.exports = function(sequelize, DataTypes) {
 					}
 					else {
 						Node.find({where: {id: _id}}, {raw: true})
-							.then(node => resolve(node))
+							.then(node => {
+								if (node)
+									resolve(node);
+								else
+									reject("Node by Id not found");
+							})
 							.catch(error => reject(error));
 					}
 				});
