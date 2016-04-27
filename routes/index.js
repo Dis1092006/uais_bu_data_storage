@@ -848,7 +848,15 @@ theDatabaseRoute.delete(function(req, res) {
 lastBackupsRoute.put(function (req, res) {
 	var file_name = req.body.file_name;
 	var database_id = req.body.database_id;
-	var lastBackup = models.LastBackup.build({file_name: file_name});
+	var backup_date = req.body.backup_date;
+	var backup_type = req.body.backup_type;
+	var backup_size = req.body.backup_size;
+	var lastBackup = models.LastBackup.build({
+		file_name: file_name,
+		backup_date: backup_date,
+		backup_type: backup_type,
+		backup_size: backup_size
+	});
 
 	lastBackup.getByDatabaseId(
 		database_id,
@@ -883,15 +891,11 @@ lastBackupsRoute.put(function (req, res) {
 	);
 });
 
-// ---------------------------------------------------------------------------------------------------------------------
-// /backups/today
-// ---------------------------------------------------------------------------------------------------------------------
-
 // GET
-todayBackupsRoute.get(function (req, res) {
-	var database = models.Database.build();
+lastBackupsRoute.get(function (req, res) {
+	var lastBackup = models.LastBackup.build();
 
-	database.getLastBackups(
+	lastBackup.getAll(
 		function(backups) {
 			if (backups) {
 				res.json(backups);
@@ -906,13 +910,20 @@ todayBackupsRoute.get(function (req, res) {
 });
 
 // ---------------------------------------------------------------------------------------------------------------------
+// /backups/today
+// ---------------------------------------------------------------------------------------------------------------------
+
+// GET
+todayBackupsRoute.get(function (req, res) {
+	res.send("Under construction"); // ToDo /backups/today
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
 // /backups/all
 // ---------------------------------------------------------------------------------------------------------------------
 
 // GET
 allBackupsRoute.get(function (req, res) {
-//	var database = models.Database.build({date: date});
-
 	res.send("Under construction"); // ToDo /backups/all
 });
 
