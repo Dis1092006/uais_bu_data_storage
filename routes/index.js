@@ -35,7 +35,7 @@ var historyRoute = router.route('/history');
 var historyByDateRoute = router.route('/history/:date');
 // Базы данных
 var databasesRoute = router.route('/databases');
-var theDatabaseRoute = router.route('/databases/:db_id');
+var theDatabaseRoute = router.route('/databases/:database_id');
 // Архивы баз данных
 var lastBackupsRoute = router.route('/backups/last');
 var todayBackupsRoute = router.route('/backups/today');
@@ -903,11 +903,12 @@ databasesRoute.get(function (req, res) {
 // POST
 databasesRoute.post(function (req, res) {
 	var name = req.body.name;
-	var server_id = req.body.server_id;
-	var database = models.Database.build({name: name});
+	var recovery_model = req.body.recovery_model;
+	var dbms_server_id = req.body.dbms_server_id;
+	var database = models.Database.build({name: name, recovery_model: recovery_model});
 
 	database.add(
-		server_id,
+		dbms_server_id,
 		(result) => {
 			if (result) {
 				res.json(result);
@@ -919,8 +920,49 @@ databasesRoute.post(function (req, res) {
 	);
 });
 
+// PUT
+databasesRoute.put(function (req, res) {
+	var name = req.body.name;
+	var recovery_model = req.body.recovery_model;
+	var dbms_server_id = req.body.dbms_server_id;
+	var database = models.Database.build({name: name, recovery_model: recovery_model});
+
+	database.getByName(
+		name,
+		(databases) => {
+			if ((databases) && (databases.length > 0)) {
+				database.update(
+					databases[0].id,
+					dbms_server_id,
+					(result) => {
+						if (result) {
+							res.json(result);
+						} else {
+							res.status(401).send("Database update fail");
+						}
+					},
+					(error) => res.status(500).send(error)
+				);
+			} else {
+				database.add(
+					dbms_server_id,
+					(result) => {
+						if (result) {
+							res.json(result);
+						} else {
+							res.status(401).send("Database add fail");
+						}
+					},
+					(error) => res.status(500).send(error)
+				);
+			}
+		},
+		(error) => res.status(500).send(error)
+	);
+});
+
 // ---------------------------------------------------------------------------------------------------------------------
-// /databases/:db_id
+// /databases/:database_id
 // ---------------------------------------------------------------------------------------------------------------------
 
 // GET
@@ -928,7 +970,7 @@ theDatabaseRoute.get(function(req, res) {
 	var database = models.Database.build();
 
 	database.getById(
-		req.params.db_id,
+		req.params.database_id,
 		(result) => {
 			if (result) {
 				res.json(result);
@@ -943,12 +985,13 @@ theDatabaseRoute.get(function(req, res) {
 // PUT
 theDatabaseRoute.put(function(req, res) {
 	var name = req.body.name;
-	var server_id = req.body.server_id;
-	var database = models.Database.build({name: name});
+	var recovery_model = req.body.recovery_model;
+	var dbms_server_id = req.body.dbms_server_id;
+	var database = models.Database.build({name: name, recovery_model: recovery_model});
 
 	database.update(
-		req.params.db_id,
-		server_id,
+		req.params.database_id,
+		dbms_server_id,
 		(result) => {
 			if (result) {
 				res.json(result);
@@ -965,7 +1008,7 @@ theDatabaseRoute.delete(function(req, res) {
 	var database = models.Database.build();
 
 	database.delete(
-		req.params.db_id,
+		req.params.database_id,
 		(result) => {
 			if (result) {
 				res.json(result);
