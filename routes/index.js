@@ -108,6 +108,7 @@ schemeTableRoute.get(function (req, res) {
 	var zone = models.Zone.build();
 	var currentZone;
 	var currentNode;
+	var currentDatabase;
 	var currentServer;
 
 	var searchByName = function (array, name) {
@@ -156,11 +157,17 @@ schemeTableRoute.get(function (req, res) {
 						app_3: "",
 						app_lic: "",
 						db_1: "",
-						db_2: ""
-						//servers: [],
-						//databases: []
+						db_2: "",
+						databases: []
 					};
 					currentZone.nodes.push(currentNode);
+				}
+				if (record.database_name) {
+					currentDatabase = searchByName(currentNode.databases, record.database_name);
+					if (!currentDatabase) {
+						currentDatabase = record.database_name;
+						currentNode.databases.push(currentDatabase);
+					}
 				}
 				switch (record.server_alias.toUpperCase()) {
 					case "WEB-1":
@@ -208,10 +215,16 @@ schemeTableRoute.get(function (req, res) {
 			resultTable += "</tr>";
 			scheme.zones.forEach(zone => {
 				zone.nodes.forEach(node => {
+					let databases = "";
+					node.databases.forEach(database => {
+						if (databases)
+							databases += ", ";
+						databases += database;
+					});
 					resultTable += "<tr>";
 					resultTable += "<td>" + zone.name + "</td>";
 					resultTable += "<td>" + node.name + "</td>";
-					resultTable += "<td></td>";
+					resultTable += "<td>" + databases + "</td>";
 					resultTable += "<td>" + node.web_1 + "</td>";
 					resultTable += "<td>" + node.web_2 + "</td>";
 					resultTable += "<td>" + node.app_1 + "</td>";

@@ -89,15 +89,20 @@ module.exports = function(sequelize, DataTypes) {
 					let _query = `
 						SELECT 
 							[Zones].[name] AS zone, 
-							[Nodes].[name] AS node, 
+							[Nodes].[name] AS node,
+							[Databases].[name] AS database_name, 
 							[Servers].[name] AS server_name, 
 							[Servers].[alias] AS server_alias
 						FROM [Zones] 
-							LEFT OUTER JOIN [Nodes] 
+							LEFT JOIN [Nodes] 
 								ON [Zones].[id] = [Nodes].[zone_id]
-							LEFT OUTER JOIN [Servers] 
+							LEFT JOIN [Servers] 
 								ON [Zones].[id] = [Servers].[zone_id] 
-								AND [Nodes].[id] = [Servers].[node_id];
+								AND [Nodes].[id] = [Servers].[node_id]
+							LEFT JOIN [DBMSServers] 
+								ON [Servers].[id] = [DBMSServers].[server_id] 
+							LEFT JOIN [Databases]
+								ON [DBMSServers].[id] = [Databases].[dbms_server_id];
 						`;
 					sequelize.query(_query, {type: sequelize.QueryTypes.SELECT})
 						.then(result => resolve(result))
