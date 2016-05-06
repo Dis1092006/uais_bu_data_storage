@@ -24,7 +24,12 @@ module.exports = function(sequelize, DataTypes) {
 				DBMSServer.find({where: {id: dbms_server_id}}, {raw: true})
 					.then(onSuccess)
 					.error(onError);
-			},	
+			},
+			getByName: function(dbms_server_name, onSuccess, onError) {
+				DBMSServer.findAll({where: {instance_name: dbms_server_name}, raw: true})
+					.then(onSuccess)
+					.error(onError);
+			},
 			add: function(server_id, onSuccess, onError) {
 				DBMSServer.create({
 					instance_name: this.instance_name,

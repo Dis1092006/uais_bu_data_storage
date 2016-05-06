@@ -28,6 +28,11 @@ module.exports = function(sequelize, DataTypes) {
 					.then(onSuccess)
 					.error(onError);
 			},
+			getByNameAndDBMSServer: function(database_name, dbms_server_id, onSuccess, onError) {
+				Database.findAll({where: {name: database_name, dbms_server_id: dbms_server_id}, raw: true})
+					.then(onSuccess)
+					.error(onError);
+			},
 			add: function(dbms_server_id, onSuccess, onError) {
 				Database.create({name: this.name, recovery_model: this.recovery_model, dbms_server_id: dbms_server_id})
 					.then(onSuccess)

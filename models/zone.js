@@ -108,6 +108,60 @@ module.exports = function(sequelize, DataTypes) {
 						.then(result => resolve(result))
 						.catch(error => reject(error));
 				});
+			},
+			getDBFileSizesSchemeByDate: function(date) {
+				return new Promise(function(resolve, reject) {
+					let _query = `
+						SELECT 
+							[Zones].[name] AS zone, 
+							[Nodes].[name] AS node,
+							[Databases].[name] AS database_name, 
+							[Servers].[name] AS server_name, 
+							[Servers].[alias] AS server_alias,
+							[DataFileSizes].data_file_size AS data_file_size,
+							[LogFileSizes].log_file_size AS log_file_size,
+							[Databases].[recovery_model] AS recovery_model
+						FROM [Zones] 
+							LEFT JOIN [Nodes] 
+								ON [Zones].[id] = [Nodes].[zone_id]
+							LEFT JOIN [Servers] 
+								ON [Zones].[id] = [Servers].[zone_id] 
+								AND [Nodes].[id] = [Servers].[node_id]
+							LEFT JOIN [DBMSServers] 
+								ON [Servers].[id] = [DBMSServers].[server_id] 
+							LEFT JOIN [Databases]
+								ON [DBMSServers].[id] = [Databases].[dbms_server_id]
+							LEFT JOIN (
+								SELECT
+									[database_id],
+									SUM([file_size]) AS data_file_size 
+								FROM [DBFileSizesHistory] 
+								WHERE 
+									[file_type] = 'D' 
+									AND [date] = '` + date + `'
+								GROUP BY
+									[database_id]
+								) AS [DataFileSizes]
+								ON [Databases].[id] = [DataFileSizes].[database_id]
+							LEFT JOIN (
+								SELECT
+									[database_id],
+									SUM([file_size]) AS log_file_size 
+								FROM [DBFileSizesHistory] 
+								WHERE 
+									[file_type] = 'L' 
+									AND [date] = '` + date + `'
+								GROUP BY
+									[database_id]
+								) AS [LogFileSizes]
+								ON [Databases].[id] = [LogFileSizes].[database_id]
+						WHERE
+							[Databases].[name] IS NOT NULL;
+						`;
+					sequelize.query(_query, {type: sequelize.QueryTypes.SELECT})
+						.then(result => resolve(result))
+						.catch(error => reject(error));
+				});
 			}
 		}
 	});

@@ -36,22 +36,31 @@
     }
 ```
 
+### API серверов СУБД
+
+* `GET /api/v1/dbms-servers` - Получить список всех серверов СУБД
+* `POST /api/v1/dbms-servers` - Добавить сервер СУБД
+    * _`{"instance_name": "IS19-D-DB-21", "port": 1433, "user": "sa", "password": "Qwe`123", "server_id": 999}`_
+* `GET /api/v1/dbms-servers/:id` - Получить сервер СУБД по id
+* `PUT /api/v1/dbms-servers/:id` - Обновить сервер СУБД по id
+    * _`{"instance_name": "IS19-D-DB-21", "port": 1433, "user": "sa", "password": "Qwe`123", "server_id": 999}`_
+* `DELETE /api/v1/dbms-servers/:id` - Удалить сервер СУБД по id
+
 ### API баз данных
 
 * `GET /api/v1/databases` - Получить список всех баз данных
 * `POST /api/v1/databases` - Добавить базу данных
+    * _`{"name": "SM", "recovery_model": "F", "dbms_server_id": 1}`_
+* `PUT /api/v1/databases` - Добавить/обновить базу данных (идентификация по имени базы данных и имени существующего сервера СУБД)
+    * _`{"name": "SM", "recovery_model": "F", "dbms_server": "IS19-P-DB-11"}`_
 * `GET /api/v1/databases/:id` - Получить базу данных по id
 * `PUT /api/v1/databases/:id` - Обновить базу данных по id
+    * _`{"name": "SM", "recovery_model": "F", "dbms_server_id": 1}`_
 * `DELETE /api/v1/databases/:id` - Удалить базу данных по id
-
-## _данные сервера_
-```
-    {
-        "name": "database_name_",
-        "server_id": "server_id"
-    }
-```
-
+* `PUT /api/v1/database-sizes` - Добавить информацию о размере файла базы данных
+    * _`{"date": "20160503", "database_name":" SM", "file_name": "SM_log", "file_type": "L", "file_size": "60280602624"}`_
+* `GET /api/v1/database-sizes/:date` - Получить данные размеров файлов баз данных за указанную дату
+* `GET /api/v1/databases/table/:date` - Отчет по базам данных УАИС БУ за указанную дату (дата указывается в формате yyyy-MM-dd)
 
 ### API архивов баз данных
 * `PUT /api/v1/backups/last` - Обновить данные по последнему архиву базы данных
