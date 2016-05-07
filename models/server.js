@@ -37,27 +37,13 @@ module.exports = function(sequelize, DataTypes) {
 					.then(onSuccess)
 					.catch(onError);
 			},
-			add: function(models, a_zone, a_node, onSuccess, onError) {
-				let zoneModel = models.Zone.build();
-				let nodeModel = models.Node.build();
-				let zone_id = null;
-				let node_id = null;
-				zoneModel.getByNameOrByID(a_zone, true, true)
-					.then(the_zone => {
-						if (the_zone)
-							zone_id = the_zone.id;
-						return nodeModel.getByNameOrByID(a_node, zone_id, true, true);
-					})
-					.then(the_node => {
-						if (the_node)
-							node_id = the_node.id;
-						return Server.create({name: this.name, alias: this.alias, zone_id: zone_id, node_id: node_id});
-					})
+			add: function(zone_id, node_id, onSuccess, onError) {
+				Server.create({name: this.name, alias: this.alias, zone_id: zone_id, node_id: node_id})
 					.then(onSuccess)
-					.catch(onError);
+					.error(onError);
 			},
-			update: function(server_id, onSuccess, onError) {
-				Server.update({name: this.name, alias: this.alias}, {where: {id: server_id}})
+			update: function(server_id, zone_id, node_id, onSuccess, onError) {
+				Server.update({name: this.name, alias: this.alias, zone_id: zone_id, node_id: node_id}, {where: {id: server_id}})
 					.then(onSuccess)
 					.error(onError);
 			},

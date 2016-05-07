@@ -3,9 +3,11 @@
 var supertest = require("supertest");
 var should = require("should");
 
-var server = supertest.agent("http://localhost:9000");
+//var server = supertest.agent("http://localhost:9000");
+var server = supertest.agent("http://10.126.200.41:9000");
 
 describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
+	let ZoneId = 14;
 	let addedNodeId = 0;
 	let addedServerId = 0;
 	let addedDatabaseId = 0;
@@ -29,7 +31,7 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 
 	it("GET /api/v1/zones/:id", function(done){
 		server
-			.get("/api/v1/zones/1")
+			.get("/api/v1/zones/" + ZoneId)
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
@@ -46,7 +48,7 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 
 	it("GET /api/v1/zones/:id/nodes", function(done){
 		server
-			.get("/api/v1/zones/1/nodes")
+			.get("/api/v1/zones/" + ZoneId + "/nodes")
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
@@ -78,26 +80,9 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			});
 	});
 
-	it("GET /api/v1/nodes/:id", function(done){
-		server
-			.get("/api/v1/nodes/1")
-			.expect("Content-type", /json/)
-			.expect(200)
-			.end(function(err, res){
-				if (err) {
-					console.log(err);
-					throw err;
-				} else {
-					console.log(res.text);
-					res.status.should.equal(200);
-				}
-				done();
-			});
-	});
-
 	it("POST /api/v1/zones/:id/nodes", function(done){
 		server
-			.post("/api/v1/zones/1/nodes")
+			.post("/api/v1/zones/" + ZoneId + "/nodes")
 			.send({"name":"Тест!"})
 			.expect("Content-type", /json/)
 			.expect(200)
@@ -109,6 +94,23 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 				res.status.should.equal(200);
 				res.body.should.have.property('id');
 				addedNodeId = res.body.id;
+				done();
+			});
+	});
+
+	it("GET /api/v1/nodes/:id", function(done){
+		server
+			.get("/api/v1/nodes/" + addedNodeId)
+			.expect("Content-type", /json/)
+			.expect(200)
+			.end(function(err, res){
+				if (err) {
+					console.log(err);
+					throw err;
+				} else {
+					console.log(res.text);
+					res.status.should.equal(200);
+				}
 				done();
 			});
 	});
@@ -146,11 +148,15 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			});
 	});
 
-	it("POST /api/v1/servers", function(done){
+	it("PUT /api/v1/servers", function(done){
 		server
-			.post("/api/v1/servers")
-			.send({"name":"Тест!","alias":"Тест!","zone":1,"node":addedNodeId})
-			.expect("Content-type", /json/)
+			.put("/api/v1/servers")
+			.send({"name":"Тест!!","alias":"Тест!!","zone":ZoneId,"node":addedNodeId})
+			.expect(function(content, type){
+				console.log(content);
+				console.log(type);
+				return true;
+			})
 			.expect(200)
 			.end(function(err, res){
 				if (err) {
@@ -217,9 +223,9 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			});
 	});
 
-	it("GET /api/v1/servers?zone=1", function(done){
+	it("GET /api/v1/servers?zone=" + ZoneId, function(done){
 		server
-			.get("/api/v1/servers?zone=1")
+			.get("/api/v1/servers?zone=" + ZoneId)
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
@@ -286,9 +292,9 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 			});
 	});
  */
-	it("GET /api/v1/servers?zone=1&node=", function(done){
+	it("GET /api/v1/servers?zone=" + ZoneId + "&node=", function(done){
 		server
-			.get("/api/v1/servers?zone=1&node=" + addedNodeId)
+			.get("/api/v1/servers?zone=" + ZoneId + "&node=" + addedNodeId)
 			.expect("Content-type", /json/)
 			.expect(200)
 			.end(function(err, res){
@@ -306,7 +312,7 @@ describe("Проверка /api/v1/zones и /api/v1/nodes", function(){
 	it("PUT /api/v1/servers/:id", function(done){
 		server
 			.put("/api/v1/servers/" + addedServerId)
-			.send({"name":"Тест! Удалить!","alias":"Тест!"})
+			.send({"name":"Тест! Удалить!","alias":"Тест!","zone_id":ZoneId,"node_id":addedNodeId})
 			.end(function(err, res){
 				if (err) {
 					console.log(err);

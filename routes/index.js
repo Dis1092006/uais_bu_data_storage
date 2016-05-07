@@ -561,29 +561,86 @@ serversRoute.get(function (req, res) {
 	.catch(error => res.status(500).send(error.message));
 });
 
-// POST
-serversRoute.post(function (req, res) {
-	var name = req.body.name;
-	var alias = req.body.alias;
-	var zone = req.body.zone;
-	var node = req.body.node;
-	var server = models.Server.build({name: name, alias: alias});
+// PUT
+serversRoute.put(function (req, res) {
+	let server_name = req.body.name;
+	let server_alias = req.body.alias;
+	let zone_name = req.body.zone;
+	let node_name = req.body.node;
 
-	server.add(
-		models,
-		zone,
-		node,
-		function(servers) {
-			if (servers) {
-				res.json(servers);
-			} else {
-				res.status(500).send("Server add fail");
+	let zoneModel = models.Zone.build();
+	let nodeModel = models.Node.build();
+	let serverModel = models.Server.build({name: server_name, alias: server_alias});
+
+	let zone_id = null;
+	let node_id = null;
+	zoneModel.getByNameOrByID(zone_name, true, true)
+		.then(the_zone => {
+			if (the_zone)
+				zone_id = the_zone.id;
+			return nodeModel.getByNameOrByID(node_name, zone_id, true, true);
+		})
+		.then(the_node => {
+			if (the_node)
+				node_id = the_node.id;
+			// Подготовка фильтра.
+			let filter = "";
+			if (server_name) {
+				if (filter !== "") {
+					filter += " AND ";
+				}
+				filter += "name like N'%" + server_name + "%'";
 			}
-		},
-		function(error) {
-			res.status(500).send(error.message);
-		}
-	);
+			if (zone_id) {
+				if (filter !== "") {
+					filter += " AND ";
+				}
+				filter += "zone_id = " + zone_id;
+			}
+			if (node_id) {
+				if (filter !== "") {
+					filter += " AND ";
+				}
+				filter += "node_id = " + node_id;
+			}
+			serverModel.getByFilter(
+				filter,
+				servers => {
+					if ((servers) && (servers.length > 0)) {
+						if (servers.length == 1) {
+							serverModel.update(
+								zone_id,
+								node_id,
+								(servers) => {
+									if (servers) {
+										res.json(servers);
+									} else {
+										res.status(500).send("Server update fail");
+									}
+								},
+								(error) => res.status(500).send(error.message)
+							);
+						} else {
+							res.status(400).send("Too many servers for this request");
+						}
+					} else {
+						serverModel.add(
+							zone_id, 
+							node_id,
+							(servers) => {
+								if (servers) {
+									res.json(servers);
+								} else {
+									res.status(500).send("Server add fail");
+								}
+							},
+							(error) => res.status(500).send(error.message)
+						);
+					}
+				},
+				error => res.status(500).send(error)
+			);
+		});
 });
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -596,16 +653,14 @@ theServerRoute.get(function(req, res) {
 
 	server.getById(
 		req.params.server_id,
-		function(servers) {
+		(servers) => {
 			if (servers) {
 				res.json(servers);
 			} else {
 				res.status(401).send("Server not found");
 			}
 		},
-		function(error) {
-			res.status(500).send(error);
-		}
+		(error) => res.status(500).send(error)
 	);
 })
 
@@ -613,20 +668,22 @@ theServerRoute.get(function(req, res) {
 theServerRoute.put(function(req, res) {
 	var name = req.body.name;
 	var alias = req.body.alias;
+	var zone_id = req.body.zone_id;
+	var node_id = req.body.node_id;
 	var server = models.Server.build({name: name, alias: alias});
 
 	server.update(
 		req.params.server_id,
-		function(servers) {
+		zone_id,
+		node_id,
+		(servers) => {
 			if (servers) {
 				res.json(servers);
 			} else {
 				res.status(500).send("Server update fail");
 			}
 		},
-		function(error) {
-			res.status(500).send(error);
-		}
+		(error) => res.status(500).send(error)
 	);
 });
 
@@ -636,16 +693,14 @@ theServerRoute.delete(function(req, res) {
 
 	server.delete(
 		req.params.server_id,
-		function(servers) {
+		(servers) => {
 			if (servers) {
 				res.json(servers);
 			} else {
 				res.status(401).send("Server not found");
 			}
 		},
-		function(error) {
-			res.status(500).send(error);
-		}
+		(error) => res.status(500).send(error)
 	);
 });
 
