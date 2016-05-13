@@ -156,7 +156,8 @@ module.exports = function(sequelize, DataTypes) {
 								) AS [LogFileSizes]
 								ON [Databases].[id] = [LogFileSizes].[database_id]
 						WHERE
-							[Databases].[name] IS NOT NULL;
+							[Databases].[name] IS NOT NULL
+							AND ([DataFileSizes].data_file_size IS NOT NULL OR [LogFileSizes].log_file_size IS NOT NULL);
 						`;
 					sequelize.query(_query, {type: sequelize.QueryTypes.SELECT})
 						.then(result => resolve(result))

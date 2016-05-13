@@ -1138,11 +1138,11 @@ databasesTableRoute.get(function(req, res) {
 				});
 
 				let resultTable = '<!DOCTYPE html>';
-				resultTable += '<style>body{font-size:11px} .grey{background-color: #D8D8D8;} .yellow{background-color: #EDFF7F;} .white{background-color: #FFFFFF;} .green{background-color: #AFFEAF;} .red{background-color: #FEA5A5;}</style>';
-				resultTable += '<h3>Отчет по базам данных УАИСБУ ' + formatDate_ddMMyyyy(reportDate) + '</h3>';
+				resultTable += '<style>.grey{background-color: #D8D8D8;} .yellow{background-color: #EDFF7F;} .white{background-color: #FFFFFF;} .green{background-color: #AFFEAF;} .red{background-color: #FEA5A5;}</style>';
+				resultTable += '<h3>Отчет по базам данных УАИС БУ ' + formatDate_ddMMyyyy(reportDate) + '</h3>';
 				scheme.zones.forEach(zone => {
 					resultTable += '<li>' + zone.name + '</li>';
-					resultTable += '<table width="100%" border="1" style="border-spacing: 0px;">';
+					resultTable += '<table width="100%" border="1" style="border-spacing: 0px; font-size: 11px">';
 					resultTable += '<tr class="grey">';
 					resultTable += '<td>#</td><td>server</td><td>alias</td><td>dbname</td><td>DataFileSizeMB</td><td>LogFileSizeMB</td><td>Recovery</td></tr>';
 					let counter = 0;
