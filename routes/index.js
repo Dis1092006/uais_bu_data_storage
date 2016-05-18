@@ -609,6 +609,7 @@ serversRoute.put(function (req, res) {
 					if ((servers) && (servers.length > 0)) {
 						if (servers.length == 1) {
 							serverModel.update(
+								servers[0].id,
 								zone_id,
 								node_id,
 								(servers) => {
@@ -1258,14 +1259,14 @@ databasesSizesRoute.put(function(req, res) {
 		file_type: file_type,
 		file_size: file_size
 	});
-	var dbms_server = models.DBMSServer.build();
-	var database = models.Database.build();
+	var dbmsServerModel = models.DBMSServer.build();
+	var databaseModel = models.Database.build({name: database_name});
 
-	dbms_server.getByName(
+	dbmsServerModel.getByName(
 		dbms_server_name,
 		(dbms_servers) => {
 			if ((dbms_servers) && (dbms_servers.length > 0)) {
-				database.getByNameAndDBMSServer(
+				databaseModel.getByNameAndDBMSServer(
 					database_name,
 					dbms_servers[0].id,
 					(databases) => {
@@ -1296,7 +1297,28 @@ databasesSizesRoute.put(function(req, res) {
 								(error) => res.status(500).send(error)
 							)
 						} else {
-							res.status(401).send("Database '" + database_name + "' on DBMS server '" + dbms_server_name + "' not found");
+							//res.status(401).send("Database '" + database_name + "' on DBMS server '" + dbms_server_name + "' not found");
+							databaseModel.add(
+								dbms_servers[0].id,
+								(database) => {
+									if (database) {
+										dbfilesizeshistory.add(
+											database.id,
+											(result) => {
+												if (result) {
+													res.json(result);
+												} else {
+													res.status(401).send("Database file size history add fail");
+												}
+											},
+											(error) => res.status(500).send(error)
+										);
+									} else {
+										res.status(401).send("Database add fail");
+									}
+								},
+								(error) => res.status(500).send(error)
+							);
 						}
 					},
 					(error) => res.status(500).send(error)
