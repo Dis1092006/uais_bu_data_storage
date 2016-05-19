@@ -5,6 +5,16 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var imdRoutes = require('./routes/imd');
+var schemeRoutes = require('./routes/scheme');
+var zonesRoutes = require('./routes/zones');
+var nodesRoutes = require('./routes/nodes');
+var serversRoutes = require('./routes/servers');
+var dbmsServersRoutes = require('./routes/dbms-servers');
+var historyRoutes = require('./routes/history');
+var databasesRoutes = require('./routes/databases');
+var databaseSizesRoutes = require('./routes/database-sizes');
+var backupsRoutes = require('./routes/backups');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -28,6 +38,16 @@ app.use(function(req, res, next) {
 });
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/api/v1/imd', imdRoutes);
+app.use('/api/v1/scheme', schemeRoutes);
+app.use('/api/v1/zones', zonesRoutes);
+app.use('/api/v1/nodes', nodesRoutes);
+app.use('/api/v1/servers', serversRoutes);
+app.use('/api/v1/dbms-servers', dbmsServersRoutes);
+app.use('/api/v1/history', historyRoutes);
+app.use('/api/v1/databases', databasesRoutes);
+app.use('/api/v1/database-sizes', databaseSizesRoutes);
+app.use('/api/v1/backups', backupsRoutes);
 app.use('/api/v1', routes);
 app.use('/users', users);
 
