@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var hbs = require('express-handlebars');
 
 var imdRoutes = require('./routes/imd');
 var schemeRoutes = require('./routes/scheme');
@@ -15,6 +16,7 @@ var historyRoutes = require('./routes/history');
 var databasesRoutes = require('./routes/databases');
 var databaseSizesRoutes = require('./routes/database-sizes');
 var backupsRoutes = require('./routes/backups');
+var clusters1cRoutes = require('./routes/clusters1c');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -22,8 +24,9 @@ var users = require('./routes/users');
 var app = express();
 
 // view engine setup
+app.engine('hbs', hbs({extname: 'hbs', defaultLayout: 'layout', layoutsDir: path.join(__dirname, 'views/layouts/')}));
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'hbs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -48,6 +51,7 @@ app.use('/api/v1/history', historyRoutes);
 app.use('/api/v1/databases', databasesRoutes);
 app.use('/api/v1/database-sizes', databaseSizesRoutes);
 app.use('/api/v1/backups', backupsRoutes);
+app.use('/api/v1/clusters1c', clusters1cRoutes);
 app.use('/api/v1', routes);
 app.use('/users', users);
 
