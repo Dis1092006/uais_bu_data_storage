@@ -59,7 +59,7 @@ lostedRPHostsForServerRoute.delete(function (req, res) {
 			if (result) {
 				res.json(result);
 			} else {
-				res.status(404).send("Losted rphosts not found");
+				res.status(200).send("Losted rphosts is absent");
 			}
 		},
 		function(error) {
