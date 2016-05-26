@@ -148,18 +148,18 @@ serversRoute.put(function (req, res) {
 				}
 				filter += "name like N'%" + server_name + "%'";
 			}
-			if (zone_id) {
-				if (filter !== "") {
-					filter += " AND ";
-				}
-				filter += "zone_id = " + zone_id;
-			}
-			if (node_id) {
-				if (filter !== "") {
-					filter += " AND ";
-				}
-				filter += "node_id = " + node_id;
-			}
+			// if (zone_id) {
+			// 	if (filter !== "") {
+			// 		filter += " AND ";
+			// 	}
+			// 	filter += "zone_id = " + zone_id;
+			// }
+			// if (node_id) {
+			// 	if (filter !== "") {
+			// 		filter += " AND ";
+			// 	}
+			// 	filter += "node_id = " + node_id;
+			// }
 			serverModel.getByFilter(
 				filter,
 				servers => {
